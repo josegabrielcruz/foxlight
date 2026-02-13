@@ -1,9 +1,9 @@
 // ============================================================
-// @pulse/core — Component Registry
+// @foxlight/core — Component Registry
 //
 // In-memory store of all discovered components and their
 // relationships. This is the central data structure that
-// every Pulse tool reads from and writes to.
+// every Foxlight tool reads from and writes to.
 // ============================================================
 
 import type {
@@ -17,10 +17,10 @@ import type {
   ComponentModification,
   BundleDiffEntry,
   HealthDiffEntry,
-} from "./types.js";
+} from './types.js';
 
 /**
- * The ComponentRegistry is the shared data layer for Pulse.
+ * The ComponentRegistry is the shared data layer for Foxlight.
  * It holds all discovered components, their relationships,
  * bundle data, and health scores.
  */
@@ -250,7 +250,9 @@ export class ComponentRegistry {
     }
 
     const bundleDiff: BundleDiffEntry[] = [];
-    const headBundleMap = new Map(head.bundleInfo.map((b) => [b.componentId, b]));
+    const headBundleMap = new Map(
+      head.bundleInfo.map((b) => [b.componentId, b]),
+    );
     for (const baseBi of base.bundleInfo) {
       const headBi = headBundleMap.get(baseBi.componentId);
       if (!headBi) continue;
@@ -306,7 +308,7 @@ export class ComponentRegistry {
 
 function diffComponent(
   base: ComponentInfo,
-  head: ComponentInfo
+  head: ComponentInfo,
 ): ComponentModification | null {
   const changes: string[] = [];
   const baseProps = new Set(base.props.map((p) => p.name));
@@ -333,10 +335,10 @@ function diffComponent(
   }
 
   if (base.children.length !== head.children.length) {
-    changes.push("children changed");
+    changes.push('children changed');
   }
   if (base.dependencies.length !== head.dependencies.length) {
-    changes.push("dependencies changed");
+    changes.push('dependencies changed');
   }
   if (base.framework !== head.framework) {
     changes.push(`framework changed: ${base.framework} → ${head.framework}`);

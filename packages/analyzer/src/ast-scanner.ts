@@ -1,5 +1,5 @@
 // ============================================================
-// @pulse/analyzer — AST Scanner
+// @foxlight/analyzer — AST Scanner
 //
 // Uses the TypeScript compiler API to parse source files and
 // extract structural information: imports, exports, JSX usage,
@@ -9,9 +9,9 @@
 // detectors in ./frameworks/ build on top of this.
 // ============================================================
 
-import ts from "typescript";
-import { readFile } from "node:fs/promises";
-import type { ImportEdge, ImportSpecifier } from "@pulse/core";
+import ts from 'typescript';
+import { readFile } from 'node:fs/promises';
+import type { ImportEdge, ImportSpecifier } from '@foxlight/core';
 
 /** Raw information extracted from a single source file. */
 export interface FileAnalysis {
@@ -26,7 +26,7 @@ export interface FileAnalysis {
 
 export interface ExportInfo {
   name: string;
-  kind: "function" | "class" | "variable" | "type" | "interface" | "re-export";
+  kind: 'function' | 'class' | 'variable' | 'type' | 'interface' | 're-export';
   isDefault: boolean;
   line: number;
 }
@@ -57,7 +57,7 @@ export interface FunctionInfo {
  * Parse a TypeScript/JavaScript file and extract structural information.
  */
 export async function analyzeFile(filePath: string): Promise<FileAnalysis> {
-  const source = await readFile(filePath, "utf-8");
+  const source = await readFile(filePath, 'utf-8');
   return analyzeSource(source, filePath);
 }
 
@@ -66,9 +66,7 @@ export async function analyzeFile(filePath: string): Promise<FileAnalysis> {
  * This is the testable core — accepts raw source text.
  */
 export function analyzeSource(source: string, filePath: string): FileAnalysis {
-  const isJsx =
-    filePath.endsWith(".tsx") ||
-    filePath.endsWith(".jsx");
+  const isJsx = filePath.endsWith('.tsx') || filePath.endsWith('.jsx');
   const scriptKind = isJsx ? ts.ScriptKind.TSX : ts.ScriptKind.TS;
 
   const sourceFile = ts.createSourceFile(
@@ -76,7 +74,7 @@ export function analyzeSource(source: string, filePath: string): FileAnalysis {
     source,
     ts.ScriptTarget.Latest,
     true, // setParentNodes
-    scriptKind
+    scriptKind,
   );
 
   const imports: ImportEdge[] = [];
@@ -118,8 +116,8 @@ export function analyzeSource(source: string, filePath: string): FileAnalysis {
               decl.name,
               decl.initializer,
               isExported,
-              sourceFile
-            )
+              sourceFile,
+            ),
           );
         }
       }
@@ -130,7 +128,7 @@ export function analyzeSource(source: string, filePath: string): FileAnalysis {
           if (ts.isIdentifier(decl.name)) {
             exports.push({
               name: decl.name.text,
-              kind: "variable",
+              kind: 'variable',
               isDefault: false,
               line: getLine(decl, sourceFile),
             });
@@ -140,11 +138,15 @@ export function analyzeSource(source: string, filePath: string): FileAnalysis {
     }
 
     // Exported function declarations
-    if (ts.isFunctionDeclaration(node) && node.name && hasExportModifier(node)) {
+    if (
+      ts.isFunctionDeclaration(node) &&
+      node.name &&
+      hasExportModifier(node)
+    ) {
       const isDefault = hasDefaultModifier(node);
       exports.push({
         name: node.name.text,
-        kind: "function",
+        kind: 'function',
         isDefault,
         line: getLine(node, sourceFile),
       });
@@ -164,7 +166,7 @@ export function analyzeSource(source: string, filePath: string): FileAnalysis {
     ) {
       exports.push({
         name: node.expression.text,
-        kind: "variable",
+        kind: 'variable',
         isDefault: true,
         line: getLine(node, sourceFile),
       });
@@ -175,7 +177,14 @@ export function analyzeSource(source: string, filePath: string): FileAnalysis {
 
   visit(sourceFile);
 
-  return { filePath, imports, exports, jsxElements, functionDeclarations, hasJsx };
+  return {
+    filePath,
+    imports,
+    exports,
+    jsxElements,
+    functionDeclarations,
+    hasJsx,
+  };
 }
 
 // -----------------------------------------------------------
@@ -185,7 +194,7 @@ export function analyzeSource(source: string, filePath: string): FileAnalysis {
 function extractImport(
   node: ts.ImportDeclaration,
   filePath: string,
-  _sourceFile: ts.SourceFile
+  _sourceFile: ts.SourceFile,
 ): ImportEdge | null {
   if (!ts.isStringLiteral(node.moduleSpecifier)) return null;
 
@@ -198,7 +207,7 @@ function extractImport(
     // Default import
     if (clause.name) {
       specifiers.push({
-        imported: "default",
+        imported: 'default',
         local: clause.name.text,
       });
     }
@@ -216,7 +225,7 @@ function extractImport(
       // Namespace import: * as Lib
       if (ts.isNamespaceImport(clause.namedBindings)) {
         specifiers.push({
-          imported: "*",
+          imported: '*',
           local: clause.namedBindings.name.text,
         });
       }
@@ -228,7 +237,7 @@ function extractImport(
 
 function extractExportDeclaration(
   node: ts.ExportDeclaration,
-  sourceFile: ts.SourceFile
+  sourceFile: ts.SourceFile,
 ): ExportInfo[] | null {
   const results: ExportInfo[] = [];
 
@@ -236,7 +245,7 @@ function extractExportDeclaration(
     for (const el of node.exportClause.elements) {
       results.push({
         name: el.name.text,
-        kind: "re-export",
+        kind: 're-export',
         isDefault: false,
         line: getLine(el, sourceFile),
       });
@@ -248,10 +257,10 @@ function extractExportDeclaration(
 
 function extractFunction(
   node: ts.FunctionDeclaration,
-  sourceFile: ts.SourceFile
+  sourceFile: ts.SourceFile,
 ): FunctionInfo {
   return {
-    name: node.name?.text ?? "<anonymous>",
+    name: node.name?.text ?? '<anonymous>',
     line: getLine(node, sourceFile),
     returnsJsx: containsJsx(node),
     parameters: extractParameters(node),
@@ -265,7 +274,7 @@ function extractArrowFunction(
   name: ts.Identifier,
   initializer: ts.ArrowFunction | ts.FunctionExpression,
   isExported: boolean,
-  sourceFile: ts.SourceFile
+  sourceFile: ts.SourceFile,
 ): FunctionInfo {
   return {
     name: name.text,
@@ -280,7 +289,7 @@ function extractArrowFunction(
 
 function extractJsxElement(
   node: ts.JsxOpeningElement | ts.JsxSelfClosingElement,
-  sourceFile: ts.SourceFile
+  sourceFile: ts.SourceFile,
 ): JsxElementInfo {
   const tagName = node.tagName.getText(sourceFile);
   const isComponent = /^[A-Z]/.test(tagName);
@@ -301,11 +310,11 @@ function extractJsxElement(
 }
 
 function extractParameters(
-  node: ts.FunctionDeclaration | ts.ArrowFunction | ts.FunctionExpression
+  node: ts.FunctionDeclaration | ts.ArrowFunction | ts.FunctionExpression,
 ): Array<{ name: string; type: string }> {
   return node.parameters.map((param) => ({
     name: param.name.getText(),
-    type: param.type?.getText() ?? "unknown",
+    type: param.type?.getText() ?? 'unknown',
   }));
 }
 
@@ -333,15 +342,21 @@ function containsJsx(node: ts.Node): boolean {
 function hasExportModifier(node: ts.Node): boolean {
   if (!ts.canHaveModifiers(node)) return false;
   const modifiers = ts.getModifiers(node);
-  return modifiers?.some((m) => m.kind === ts.SyntaxKind.ExportKeyword) ?? false;
+  return (
+    modifiers?.some((m) => m.kind === ts.SyntaxKind.ExportKeyword) ?? false
+  );
 }
 
 function hasDefaultModifier(node: ts.Node): boolean {
   if (!ts.canHaveModifiers(node)) return false;
   const modifiers = ts.getModifiers(node);
-  return modifiers?.some((m) => m.kind === ts.SyntaxKind.DefaultKeyword) ?? false;
+  return (
+    modifiers?.some((m) => m.kind === ts.SyntaxKind.DefaultKeyword) ?? false
+  );
 }
 
 function getLine(node: ts.Node, sourceFile: ts.SourceFile): number {
-  return sourceFile.getLineAndCharacterOfPosition(node.getStart(sourceFile)).line + 1;
+  return (
+    sourceFile.getLineAndCharacterOfPosition(node.getStart(sourceFile)).line + 1
+  );
 }

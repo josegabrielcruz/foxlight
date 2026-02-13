@@ -1,26 +1,29 @@
 // ============================================================
-// @pulse/analyzer — Project Analyzer
+// @foxlight/analyzer — Project Analyzer
 //
 // High-level orchestrator that scans a project directory,
 // analyzes all source files, detects components, and builds
 // the component registry and dependency graph.
 // ============================================================
 
-import { readdir } from "node:fs/promises";
-import { resolve, relative } from "node:path";
+import { readdir } from 'node:fs/promises';
+import { resolve, relative } from 'node:path';
 import {
   ComponentRegistry,
   DependencyGraph,
   loadConfig,
-  type PulseConfig,
+  type FoxlightConfig,
   type Framework,
-} from "@pulse/core";
-import { analyzeFile } from "./ast-scanner.js";
-import { detectComponents, crossReferenceComponents } from "./component-detector.js";
+} from '@foxlight/core';
+import { analyzeFile } from './ast-scanner.js';
+import {
+  detectComponents,
+  crossReferenceComponents,
+} from './component-detector.js';
 
 /** Result of a full project analysis. */
 export interface ProjectAnalysis {
-  config: PulseConfig;
+  config: FoxlightConfig;
   registry: ComponentRegistry;
   graph: DependencyGraph;
   stats: AnalysisStats;
@@ -39,7 +42,7 @@ export interface AnalysisStats {
  */
 export async function analyzeProject(
   rootDir: string,
-  configOverrides?: Partial<PulseConfig>
+  configOverrides?: Partial<FoxlightConfig>,
 ): Promise<ProjectAnalysis> {
   const startTime = performance.now();
 
@@ -49,7 +52,7 @@ export async function analyzeProject(
     ...configOverrides,
   };
 
-  const framework: Framework = config.framework ?? "unknown";
+  const framework: Framework = config.framework ?? 'unknown';
 
   // Find all matching source files
   const files = await findSourceFiles(config);
@@ -75,7 +78,7 @@ export async function analyzeProject(
       }
     } catch (error) {
       // Log but don't fail — some files may have parse errors
-      console.warn(`[pulse] Warning: Failed to analyze ${filePath}:`, error);
+      console.warn(`[foxlight] Warning: Failed to analyze ${filePath}:`, error);
     }
   }
 
@@ -109,7 +112,7 @@ export async function analyzeProject(
 /**
  * Find all source files matching the config's include/exclude patterns.
  */
-async function findSourceFiles(config: PulseConfig): Promise<string[]> {
+async function findSourceFiles(config: FoxlightConfig): Promise<string[]> {
   const rootDir = resolve(config.rootDir);
 
   // Collect all files recursively
@@ -118,8 +121,8 @@ async function findSourceFiles(config: PulseConfig): Promise<string[]> {
   // Filter by include/exclude patterns using simple glob matching
   const includeExts = extractExtensions(config.include);
   const excludeDirs = config.exclude
-    .filter((p) => p.includes("**"))
-    .map((p) => p.replace(/\/\*\*.*/, "").replace(/\*\*\//, ""));
+    .filter((p) => p.includes('**'))
+    .map((p) => p.replace(/\/\*\*.*/, '').replace(/\*\*\//, ''));
 
   return allFiles.filter((filePath) => {
     const rel = relative(rootDir, filePath);
@@ -130,7 +133,7 @@ async function findSourceFiles(config: PulseConfig): Promise<string[]> {
     }
 
     // Check file extension
-    const ext = filePath.slice(filePath.lastIndexOf("."));
+    const ext = filePath.slice(filePath.lastIndexOf('.'));
     return includeExts.has(ext);
   });
 }
@@ -142,7 +145,7 @@ async function walkDir(dir: string): Promise<string[]> {
     for (const entry of entries) {
       const fullPath = resolve(dir, entry.name);
       if (entry.isDirectory()) {
-        if (entry.name === "node_modules" || entry.name === ".git") continue;
+        if (entry.name === 'node_modules' || entry.name === '.git') continue;
         results.push(...(await walkDir(fullPath)));
       } else {
         results.push(fullPath);
@@ -159,14 +162,14 @@ function extractExtensions(patterns: string[]): Set<string> {
   for (const pattern of patterns) {
     const match = pattern.match(/\.\{([^}]+)\}/);
     if (match?.[1]) {
-      for (const ext of match[1].split(",")) {
+      for (const ext of match[1].split(',')) {
         exts.add(`.${ext.trim()}`);
       }
     }
   }
   if (exts.size === 0) {
     // Default extensions
-    exts.add(".tsx").add(".jsx").add(".vue").add(".svelte");
+    exts.add('.tsx').add('.jsx').add('.vue').add('.svelte');
   }
   return exts;
 }

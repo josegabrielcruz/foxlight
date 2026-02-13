@@ -1,47 +1,45 @@
 // ============================================================
-// @pulse/core — Configuration loader
+// @foxlight/core — Configuration loader
 //
-// Loads and validates pulse.config.ts / pulse.config.js
+// Loads and validates foxlight.config.ts / foxlight.config.js
 // from the user's project root.
 // ============================================================
 
-import { existsSync } from "node:fs";
-import { readFile } from "node:fs/promises";
-import { resolve, join } from "node:path";
-import type { PulseConfig, Framework } from "./types.js";
+import { existsSync } from 'node:fs';
+import { readFile } from 'node:fs/promises';
+import { resolve, join } from 'node:path';
+import type { FoxlightConfig, Framework } from './types.js';
 
 const CONFIG_FILENAMES = [
-  "pulse.config.ts",
-  "pulse.config.js",
-  "pulse.config.mjs",
-  "pulse.config.json",
+  'foxlight.config.ts',
+  'foxlight.config.js',
+  'foxlight.config.mjs',
+  'foxlight.config.json',
 ];
 
 const DEFAULT_INCLUDE = [
-  "src/**/*.{tsx,jsx,vue,svelte}",
-  "components/**/*.{tsx,jsx,vue,svelte}",
-  "app/**/*.{tsx,jsx,vue,svelte}",
-  "pages/**/*.{tsx,jsx,vue,svelte}",
+  'src/**/*.{tsx,jsx,vue,svelte}',
+  'components/**/*.{tsx,jsx,vue,svelte}',
+  'app/**/*.{tsx,jsx,vue,svelte}',
+  'pages/**/*.{tsx,jsx,vue,svelte}',
 ];
 
 const DEFAULT_EXCLUDE = [
-  "**/node_modules/**",
-  "**/dist/**",
-  "**/build/**",
-  "**/.next/**",
-  "**/.nuxt/**",
-  "**/*.test.*",
-  "**/*.spec.*",
-  "**/*.stories.*",
+  '**/node_modules/**',
+  '**/dist/**',
+  '**/build/**',
+  '**/.next/**',
+  '**/.nuxt/**',
+  '**/*.test.*',
+  '**/*.spec.*',
+  '**/*.stories.*',
 ];
 
 /**
- * Resolve and load the Pulse configuration.
+ * Resolve and load the Foxlight configuration.
  * Searches for config files in the given directory, or returns defaults.
  */
-export async function loadConfig(
-  rootDir: string
-): Promise<PulseConfig> {
+export async function loadConfig(rootDir: string): Promise<FoxlightConfig> {
   const resolvedRoot = resolve(rootDir);
 
   // Try to find a config file
@@ -61,7 +59,7 @@ export async function loadConfig(
 /**
  * Create a default configuration for the given root directory.
  */
-export function createDefaultConfig(rootDir: string): PulseConfig {
+export function createDefaultConfig(rootDir: string): FoxlightConfig {
   return {
     rootDir: resolve(rootDir),
     include: DEFAULT_INCLUDE,
@@ -73,28 +71,28 @@ export function createDefaultConfig(rootDir: string): PulseConfig {
  * Auto-detect the framework used in a project by examining package.json.
  */
 export async function detectFramework(rootDir: string): Promise<Framework> {
-  const pkgPath = join(rootDir, "package.json");
+  const pkgPath = join(rootDir, 'package.json');
 
-  if (!existsSync(pkgPath)) return "unknown";
+  if (!existsSync(pkgPath)) return 'unknown';
 
   try {
-    const raw = await readFile(pkgPath, "utf-8");
+    const raw = await readFile(pkgPath, 'utf-8');
     const pkg = JSON.parse(raw) as Record<string, Record<string, string>>;
     const allDeps = {
-      ...pkg["dependencies"],
-      ...pkg["devDependencies"],
+      ...pkg['dependencies'],
+      ...pkg['devDependencies'],
     };
 
-    if ("react" in allDeps) return "react";
-    if ("vue" in allDeps) return "vue";
-    if ("svelte" in allDeps) return "svelte";
-    if ("@angular/core" in allDeps) return "angular";
-    if ("lit" in allDeps || "lit-element" in allDeps) return "web-component";
+    if ('react' in allDeps) return 'react';
+    if ('vue' in allDeps) return 'vue';
+    if ('svelte' in allDeps) return 'svelte';
+    if ('@angular/core' in allDeps) return 'angular';
+    if ('lit' in allDeps || 'lit-element' in allDeps) return 'web-component';
   } catch {
     // Failed to read/parse package.json — fall through
   }
 
-  return "unknown";
+  return 'unknown';
 }
 
 // -----------------------------------------------------------
@@ -102,18 +100,18 @@ export async function detectFramework(rootDir: string): Promise<Framework> {
 // -----------------------------------------------------------
 
 async function loadConfigFile(
-  configPath: string
-): Promise<Partial<PulseConfig>> {
-  if (configPath.endsWith(".json")) {
-    const raw = await readFile(configPath, "utf-8");
-    return JSON.parse(raw) as Partial<PulseConfig>;
+  configPath: string,
+): Promise<Partial<FoxlightConfig>> {
+  if (configPath.endsWith('.json')) {
+    const raw = await readFile(configPath, 'utf-8');
+    return JSON.parse(raw) as Partial<FoxlightConfig>;
   }
 
   // For .ts/.js/.mjs files, use dynamic import
   // Note: .ts files will need tsx or ts-node to be available
   try {
     const mod = (await import(configPath)) as {
-      default?: Partial<PulseConfig>;
+      default?: Partial<FoxlightConfig>;
     };
     return mod.default ?? {};
   } catch {
@@ -124,8 +122,8 @@ async function loadConfigFile(
 
 function mergeWithDefaults(
   rootDir: string,
-  partial: Partial<PulseConfig>
-): PulseConfig {
+  partial: Partial<FoxlightConfig>,
+): FoxlightConfig {
   return {
     rootDir,
     include: partial.include ?? DEFAULT_INCLUDE,

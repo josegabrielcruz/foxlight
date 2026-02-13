@@ -1,13 +1,13 @@
 // ============================================================
-// @pulse/cli — Health command
+// @foxlight/cli — Health command
 //
 // Displays the component health dashboard in the terminal.
 // Shows scores for bundle size, test coverage, accessibility,
 // freshness, performance, and reliability.
 // ============================================================
 
-import { analyzeProject } from "@pulse/analyzer";
-import { ui } from "../utils/output.js";
+import { analyzeProject } from '@foxlight/analyzer';
+import { ui } from '../utils/output.js';
 
 export interface HealthOptions {
   rootDir: string;
@@ -18,14 +18,14 @@ export interface HealthOptions {
 export async function runHealth(options: HealthOptions): Promise<void> {
   const { rootDir, json, component } = options;
 
-  ui.progress("Analyzing project health");
+  ui.progress('Analyzing project health');
   const result = await analyzeProject(rootDir);
-  ui.progressDone("Analysis complete");
+  ui.progressDone('Analysis complete');
 
   const components = result.registry.getAllComponents();
 
   if (components.length === 0) {
-    ui.warn("No components found. Run `pulse analyze` to check your config.");
+    ui.warn('No components found. Run `foxlight analyze` to check your config.');
     return;
   }
 
@@ -64,7 +64,7 @@ export async function runHealth(options: HealthOptions): Promise<void> {
     ? healthData.filter(
         (h) =>
           h.name.toLowerCase() === component.toLowerCase() ||
-          h.id.toLowerCase().includes(component.toLowerCase())
+          h.id.toLowerCase().includes(component.toLowerCase()),
       )
     : healthData;
 
@@ -73,12 +73,12 @@ export async function runHealth(options: HealthOptions): Promise<void> {
     return;
   }
 
-  ui.heading("Component Health Dashboard");
+  ui.heading('Component Health Dashboard');
 
   const widths = [25, 10, 12, 10, 8, 8];
   ui.tableHeader(
-    ["Component", "Score", "Complexity", "API", "Deps", "Children"],
-    widths
+    ['Component', 'Score', 'Complexity', 'API', 'Deps', 'Children'],
+    widths,
   );
 
   // Sort by score (worst first)
@@ -94,7 +94,7 @@ export async function runHealth(options: HealthOptions): Promise<void> {
         String(h.deps),
         String(h.children),
       ],
-      widths
+      widths,
     );
   }
 
@@ -103,12 +103,12 @@ export async function runHealth(options: HealthOptions): Promise<void> {
     display.reduce((sum, h) => sum + h.overall, 0) / display.length;
   const critical = display.filter((h) => h.overall < 50).length;
   const warning = display.filter(
-    (h) => h.overall >= 50 && h.overall < 80
+    (h) => h.overall >= 50 && h.overall < 80,
   ).length;
   const healthy = display.filter((h) => h.overall >= 80).length;
 
-  ui.heading("Summary");
-  ui.info("Average health score:", ui.healthScore(Math.round(avgScore)));
+  ui.heading('Summary');
+  ui.info('Average health score:', ui.healthScore(Math.round(avgScore)));
   ui.success(`${healthy} healthy`);
   if (warning > 0) ui.warn(`${warning} need attention`);
   if (critical > 0) ui.error(`${critical} critical`);

@@ -1,12 +1,12 @@
 {
-  "name": "@pulse/cli",
+  "name": "@foxlight/cli",
   "version": "0.1.0",
-  "description": "Command-line interface for Pulse — analyze components, check health, run upgrades.",
+  "description": "Command-line interface for Foxlight — analyze components, check health, run upgrades.",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": {
-    "pulse": "./dist/index.js"
+    "foxlight": "./dist/index.js"
   },
   "exports": {
     ".": {
@@ -19,10 +19,12 @@
     "dev": "tsup --watch"
   },
   "dependencies": {
-    "@pulse/core": "*",
-    "@pulse/analyzer": "*",
-    "@pulse/bundle": "*"
+    "@foxlight/core": "*",
+    "@foxlight/analyzer": "*",
+    "@foxlight/bundle": "*"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "license": "MIT"
 }

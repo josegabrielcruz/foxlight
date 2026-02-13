@@ -1,7 +1,7 @@
 {
-  "name": "@pulse/bundle",
+  "name": "@foxlight/bundle",
   "version": "0.1.0",
-  "description": "Bundle size analysis for Pulse — Vite and Webpack plugins for per-component size tracking.",
+  "description": "Bundle size analysis for Foxlight — Vite and Webpack plugins for per-component size tracking.",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -20,14 +20,18 @@
     "dev": "tsup --watch"
   },
   "dependencies": {
-    "@pulse/core": "*"
+    "@foxlight/core": "*"
   },
   "peerDependencies": {
     "vite": "^5.0.0 || ^6.0.0"
   },
   "peerDependenciesMeta": {
-    "vite": { "optional": true }
+    "vite": {
+      "optional": true
+    }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "license": "MIT"
 }

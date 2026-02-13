@@ -1,7 +1,7 @@
 // ============================================================
-// @pulse/core — Type definitions
+// @foxlight/core — Type definitions
 //
-// These types form the shared data layer for the entire Pulse
+// These types form the shared data layer for the entire Foxlight
 // platform. Every package depends on these types.
 // ============================================================
 
@@ -13,14 +13,20 @@
 export type ComponentId = string;
 
 /** The front-end framework a component belongs to. */
-export type Framework = "react" | "vue" | "svelte" | "angular" | "web-component" | "unknown";
+export type Framework =
+  | 'react'
+  | 'vue'
+  | 'svelte'
+  | 'angular'
+  | 'web-component'
+  | 'unknown';
 
 /** How a component is exported from its module. */
-export type ExportKind = "named" | "default" | "re-export";
+export type ExportKind = 'named' | 'default' | 're-export';
 
 /**
  * Core representation of a UI component discovered in the codebase.
- * This is the central entity that all Pulse tools operate on.
+ * This is the central entity that all Foxlight tools operate on.
  */
 export interface ComponentInfo {
   /** Stable identifier (typically: filePath#componentName) */
@@ -151,7 +157,7 @@ export interface MetricScore {
   /** Human-readable label */
   label: string;
   /** Severity level */
-  level: "good" | "warning" | "critical";
+  level: 'good' | 'warning' | 'critical';
 }
 
 // -----------------------------------------------------------
@@ -160,7 +166,7 @@ export interface MetricScore {
 
 /** Cost model for a hosting provider. */
 export interface CostModel {
-  provider: "vercel" | "netlify" | "aws" | "cloudflare" | "custom";
+  provider: 'vercel' | 'netlify' | 'aws' | 'cloudflare' | 'custom';
   /** Cost per 1M function invocations (USD) */
   invocationCostPer1M: number;
   /** Cost per GB bandwidth (USD) */
@@ -186,7 +192,7 @@ export interface CostImpact {
 }
 
 export interface CostBreakdownItem {
-  category: "invocations" | "bandwidth" | "storage" | "edge" | "base";
+  category: 'invocations' | 'bandwidth' | 'storage' | 'edge' | 'base';
   description: string;
   currentCost: number;
   projectedCost: number;
@@ -206,14 +212,14 @@ export interface UpgradePreview {
   /** Target version */
   toVersion: string;
   /** Risk assessment */
-  risk: "low" | "medium" | "high";
+  risk: 'low' | 'medium' | 'high';
   /** Individual checks that were run */
   checks: UpgradeCheck[];
 }
 
 export interface UpgradeCheck {
   name: string;
-  status: "pass" | "warn" | "fail";
+  status: 'pass' | 'warn' | 'fail';
   summary: string;
   details?: string;
 }
@@ -222,8 +228,8 @@ export interface UpgradeCheck {
 // Project configuration
 // -----------------------------------------------------------
 
-/** User-facing configuration (pulse.config.ts). */
-export interface PulseConfig {
+/** User-facing configuration (foxlight.config.ts). */
+export interface FoxlightConfig {
   /** Root directory of the project */
   rootDir: string;
   /** Glob patterns for source files to analyze */
@@ -244,7 +250,7 @@ export interface PulseConfig {
 
 export interface BaselineConfig {
   /** Storage provider */
-  provider: "s3" | "gcs" | "r2" | "local" | "git-lfs";
+  provider: 's3' | 'gcs' | 'r2' | 'local' | 'git-lfs';
   /** Bucket or directory name */
   bucket: string;
   /** Optional prefix / path within the bucket */

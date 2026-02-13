@@ -1,12 +1,12 @@
 // ============================================================
-// @pulse/core — Dependency Graph
+// @foxlight/core — Dependency Graph
 //
 // Builds and queries a directed graph from import edges.
 // Used for tree-shaking analysis, impact analysis, and
 // understanding which components share dependencies.
 // ============================================================
 
-import type { ImportEdge } from "./types.js";
+import type { ImportEdge } from './types.js';
 
 interface GraphNode {
   /** Absolute file path or package name */

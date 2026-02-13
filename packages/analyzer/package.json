@@ -1,7 +1,7 @@
 {
-  "name": "@pulse/analyzer",
+  "name": "@foxlight/analyzer",
   "version": "0.1.0",
-  "description": "Static analysis engine for Pulse — AST scanning, component detection, import resolution.",
+  "description": "Static analysis engine for Foxlight — AST scanning, component detection, import resolution.",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -16,9 +16,11 @@
     "dev": "tsup --watch"
   },
   "dependencies": {
-    "@pulse/core": "*",
+    "@foxlight/core": "*",
     "typescript": "^5.4.0"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "license": "MIT"
 }

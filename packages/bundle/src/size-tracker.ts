@@ -1,13 +1,13 @@
 // ============================================================
-// @pulse/bundle — Size Tracker
+// @foxlight/bundle — Size Tracker
 //
 // Computes per-module and per-component bundle size from
 // build output. Works with raw file sizes and optionally
 // computes gzip/brotli estimates.
 // ============================================================
 
-import { gzipSync } from "node:zlib";
-import type { SizeInfo, ComponentBundleInfo, ComponentId } from "@pulse/core";
+import { gzipSync } from 'node:zlib';
+import type { SizeInfo, ComponentBundleInfo, ComponentId } from '@foxlight/core';
 
 /** A module in the build output. */
 export interface ModuleEntry {
@@ -23,8 +23,8 @@ export interface ModuleEntry {
  * Compute size info for a piece of code.
  */
 export function computeSize(code: string): SizeInfo {
-  const raw = Buffer.byteLength(code, "utf-8");
-  const gzip = gzipSync(Buffer.from(code, "utf-8")).byteLength;
+  const raw = Buffer.byteLength(code, 'utf-8');
+  const gzip = gzipSync(Buffer.from(code, 'utf-8')).byteLength;
   return { raw, gzip };
 }
 
@@ -42,7 +42,7 @@ export function computeSize(code: string): SizeInfo {
 export function computeComponentBundleInfo(
   componentModules: Map<ComponentId, string[]>,
   allModules: Map<string, ModuleEntry>,
-  dependencyResolver: (moduleId: string) => string[]
+  dependencyResolver: (moduleId: string) => string[],
 ): ComponentBundleInfo[] {
   const results: ComponentBundleInfo[] = [];
   const allComponentIds = Array.from(componentModules.keys());
@@ -74,7 +74,7 @@ export function computeComponentBundleInfo(
       }
     }
     const exclusiveModules = Array.from(allDeps).filter(
-      (d) => !otherDeps.has(d)
+      (d) => !otherDeps.has(d),
     );
     const exclusiveSize = aggregateSize(exclusiveModules, allModules);
 
@@ -106,7 +106,7 @@ export function computeComponentBundleInfo(
  */
 function aggregateSize(
   moduleIds: string[],
-  allModules: Map<string, ModuleEntry>
+  allModules: Map<string, ModuleEntry>,
 ): SizeInfo {
   let totalRaw = 0;
   let totalGzip = 0;
@@ -127,11 +127,11 @@ function aggregateSize(
  * Format bytes into a human-readable string.
  */
 export function formatBytes(bytes: number): string {
-  if (bytes === 0) return "0 B";
-  const units = ["B", "KB", "MB", "GB"];
+  if (bytes === 0) return '0 B';
+  const units = ['B', 'KB', 'MB', 'GB'];
   const i = Math.floor(Math.log(Math.abs(bytes)) / Math.log(1024));
   const value = bytes / Math.pow(1024, i);
-  const sign = bytes < 0 ? "-" : "";
+  const sign = bytes < 0 ? '-' : '';
   return `${sign}${Math.abs(value).toFixed(value >= 100 ? 0 : value >= 10 ? 1 : 2)} ${units[i]}`;
 }
 
@@ -140,10 +140,10 @@ export function formatBytes(bytes: number): string {
  */
 export function formatDelta(before: SizeInfo, after: SizeInfo): string {
   const delta = after.gzip - before.gzip;
-  const sign = delta > 0 ? "+" : "";
+  const sign = delta > 0 ? '+' : '';
   const percent =
     before.gzip > 0
       ? ` (${sign}${((delta / before.gzip) * 100).toFixed(1)}%)`
-      : "";
+      : '';
   return `${sign}${formatBytes(delta)}${percent}`;
 }

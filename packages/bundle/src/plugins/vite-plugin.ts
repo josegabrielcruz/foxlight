@@ -1,26 +1,26 @@
 // ============================================================
-// @pulse/bundle — Vite Plugin
+// @foxlight/bundle — Vite Plugin
 //
 // A Vite plugin that hooks into the build process to extract
 // per-module size information and map it to components.
-// Outputs a pulse-bundle-report.json after each build.
+// Outputs a foxlight-bundle-report.json after each build.
 // ============================================================
 
-import { writeFile, mkdir } from "node:fs/promises";
-import { join } from "node:path";
-import type { Plugin, Rollup } from "vite";
-import type { ComponentBundleInfo, SizeInfo } from "@pulse/core";
+import { writeFile, mkdir } from 'node:fs/promises';
+import { join } from 'node:path';
+import type { Plugin, Rollup } from 'vite';
+import type { ComponentBundleInfo, SizeInfo } from '@foxlight/core';
 import {
   computeSize,
   computeComponentBundleInfo,
   formatBytes,
   type ModuleEntry,
-} from "../size-tracker.js";
+} from '../size-tracker.js';
 
-export interface PulseVitePluginOptions {
+export interface FoxlightVitePluginOptions {
   /**
    * Path to the output report file.
-   * @default ".pulse/bundle-report.json"
+   * @default ".foxlight/bundle-report.json"
    */
   outputPath?: string;
 
@@ -39,28 +39,26 @@ export interface PulseVitePluginOptions {
 }
 
 /**
- * Vite plugin for Pulse bundle analysis.
+ * Vite plugin for Foxlight bundle analysis.
  *
  * Usage in vite.config.ts:
  * ```ts
- * import { pulseBundle } from "@pulse/bundle/vite";
+ * import { foxlightBundle } from "@foxlight/bundle/vite";
  *
  * export default defineConfig({
- *   plugins: [pulseBundle()],
+ *   plugins: [foxlightBundle()],
  * });
  * ```
  */
-export function pulseBundle(options: PulseVitePluginOptions = {}): Plugin {
-  const {
-    outputPath = ".pulse/bundle-report.json",
-    printSummary = true,
-  } = options;
+export function foxlightBundle(options: FoxlightVitePluginOptions = {}): Plugin {
+  const { outputPath = '.foxlight/bundle-report.json', printSummary = true } =
+    options;
 
   let rootDir: string;
 
   return {
-    name: "pulse-bundle",
-    enforce: "post",
+    name: 'foxlight-bundle',
+    enforce: 'post',
 
     configResolved(config) {
       rootDir = config.root;
@@ -72,7 +70,7 @@ export function pulseBundle(options: PulseVitePluginOptions = {}): Plugin {
 
       // Extract module information from each chunk
       for (const [fileName, chunk] of Object.entries(bundle)) {
-        if (chunk.type !== "chunk") continue;
+        if (chunk.type !== 'chunk') continue;
 
         const chunkSize = computeSize(chunk.code);
         chunkSizes.push({ name: fileName, size: chunkSize });
@@ -80,7 +78,7 @@ export function pulseBundle(options: PulseVitePluginOptions = {}): Plugin {
         // Map each module in this chunk
         if (chunk.modules) {
           for (const [moduleId, moduleInfo] of Object.entries(
-            chunk.modules as Record<string, Rollup.RenderedModule>
+            chunk.modules as Record<string, Rollup.RenderedModule>,
           )) {
             const existing = modules.get(moduleId);
             if (existing) {
@@ -88,7 +86,7 @@ export function pulseBundle(options: PulseVitePluginOptions = {}): Plugin {
             } else {
               modules.set(moduleId, {
                 id: moduleId,
-                code: moduleInfo.code ?? "",
+                code: moduleInfo.code ?? '',
                 chunks: [fileName],
               });
             }
@@ -102,7 +100,7 @@ export function pulseBundle(options: PulseVitePluginOptions = {}): Plugin {
         componentInfo = computeComponentBundleInfo(
           options.componentModules,
           modules,
-          () => [] // TODO: integrate with DependencyGraph
+          () => [], // TODO: integrate with DependencyGraph
         );
       }
 
@@ -117,7 +115,7 @@ export function pulseBundle(options: PulseVitePluginOptions = {}): Plugin {
         })),
         modules: Array.from(modules.values()).map((m) => ({
           id: m.id,
-          rawSize: Buffer.byteLength(m.code, "utf-8"),
+          rawSize: Buffer.byteLength(m.code, 'utf-8'),
           chunks: m.chunks,
         })),
         components: componentInfo,
@@ -127,42 +125,36 @@ export function pulseBundle(options: PulseVitePluginOptions = {}): Plugin {
 
       // Write report
       const reportPath = join(rootDir, outputPath);
-      const reportDir = reportPath.substring(
-        0,
-        reportPath.lastIndexOf("/")
-      );
+      const reportDir = reportPath.substring(0, reportPath.lastIndexOf('/'));
       await mkdir(reportDir, { recursive: true });
       await writeFile(reportPath, JSON.stringify(report, null, 2));
 
       // Print summary
       if (printSummary) {
         const totalRaw = chunkSizes.reduce((sum, c) => sum + c.size.raw, 0);
-        const totalGzip = chunkSizes.reduce(
-          (sum, c) => sum + c.size.gzip,
-          0
-        );
+        const totalGzip = chunkSizes.reduce((sum, c) => sum + c.size.gzip, 0);
 
-        console.log("\n📦 Pulse Bundle Report");
-        console.log("─".repeat(50));
+        console.log('\n📦 Foxlight Bundle Report');
+        console.log('─'.repeat(50));
         console.log(`   Chunks: ${chunkSizes.length}`);
         console.log(`   Modules: ${modules.size}`);
         console.log(`   Total (raw): ${formatBytes(totalRaw)}`);
         console.log(`   Total (gzip): ${formatBytes(totalGzip)}`);
         console.log(`   Report: ${outputPath}`);
-        console.log("─".repeat(50));
+        console.log('─'.repeat(50));
 
         if (componentInfo && componentInfo.length > 0) {
-          console.log("\n   Components by size (gzip):");
+          console.log('\n   Components by size (gzip):');
           const sorted = [...componentInfo].sort(
-            (a, b) => b.selfSize.gzip - a.selfSize.gzip
+            (a, b) => b.selfSize.gzip - a.selfSize.gzip,
           );
           for (const comp of sorted.slice(0, 10)) {
             console.log(
-              `     ${formatBytes(comp.selfSize.gzip).padStart(10)}  ${comp.componentId}`
+              `     ${formatBytes(comp.selfSize.gzip).padStart(10)}  ${comp.componentId}`,
             );
           }
         }
-        console.log("");
+        console.log('');
       }
     },
   };

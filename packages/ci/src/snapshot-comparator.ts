@@ -1,19 +1,19 @@
 // ============================================================
-// @pulse/ci — Snapshot Comparator
+// @foxlight/ci — Snapshot Comparator
 //
 // Compares two project snapshots (base vs head) and produces
 // a structured diff used by CI reporters (GitHub, GitLab, etc).
 // ============================================================
 
-import { readFile, writeFile, mkdir } from "node:fs/promises";
-import { existsSync } from "node:fs";
-import { dirname } from "node:path";
+import { readFile, writeFile, mkdir } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
+import { dirname } from 'node:path';
 import {
   ComponentRegistry,
   type ProjectSnapshot,
   type SnapshotDiff,
-} from "@pulse/core";
-import { analyzeProject } from "@pulse/analyzer";
+} from '@foxlight/core';
+import { analyzeProject } from '@foxlight/analyzer';
 
 export interface CompareOptions {
   /** Path to the base snapshot JSON file */
@@ -38,13 +38,9 @@ export interface CompareResult {
  * Analyze the current state, compare against a baseline, and produce a diff.
  */
 export async function compareSnapshots(
-  options: CompareOptions
+  options: CompareOptions,
 ): Promise<CompareResult> {
-  const {
-    rootDir,
-    commitSha = "unknown",
-    branch = "unknown",
-  } = options;
+  const { rootDir, commitSha = 'unknown', branch = 'unknown' } = options;
 
   // Analyze current project state
   const analysis = await analyzeProject(rootDir);
@@ -62,7 +58,7 @@ export async function compareSnapshots(
   // Load base snapshot
   let base: ProjectSnapshot;
   if (options.basePath && existsSync(options.basePath)) {
-    const raw = await readFile(options.basePath, "utf-8");
+    const raw = await readFile(options.basePath, 'utf-8');
     base = JSON.parse(raw) as ProjectSnapshot;
   } else {
     // No baseline — treat as empty (everything is "added")
@@ -80,9 +76,9 @@ export async function compareSnapshots(
  */
 function createEmptySnapshot(): ProjectSnapshot {
   return {
-    id: "empty",
-    commitSha: "0000000",
-    branch: "none",
+    id: 'empty',
+    commitSha: '0000000',
+    branch: 'none',
     createdAt: new Date().toISOString(),
     components: [],
     imports: [],
@@ -102,14 +98,12 @@ export function hasSignificantChanges(diff: SnapshotDiff): boolean {
 
   // Check for significant bundle size changes (> 1KB gzip)
   const hasBundleChange = diff.bundleDiff.some(
-    (b) => Math.abs(b.delta.gzip) > 1024
+    (b) => Math.abs(b.delta.gzip) > 1024,
   );
   if (hasBundleChange) return true;
 
   // Check for significant health score changes (> 10 points)
-  const hasHealthChange = diff.healthDiff.some(
-    (h) => Math.abs(h.delta) > 10
-  );
+  const hasHealthChange = diff.healthDiff.some((h) => Math.abs(h.delta) > 10);
   if (hasHealthChange) return true;
 
   return false;

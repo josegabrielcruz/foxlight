@@ -1,4 +1,4 @@
-# Pulse
+# Foxlight
 
 **Open-source front-end intelligence platform.**
 
@@ -6,13 +6,13 @@ Component health tracking, dependency upgrade previews, and infrastructure cost 
 
 ## Packages
 
-| Package | Description |
-|---|---|
-| `@pulse/core` | Shared data types, component registry, dependency graph |
-| `@pulse/analyzer` | Static analysis engine — AST scanning, component detection |
-| `@pulse/bundle` | Bundle size analysis — Vite and Webpack plugins |
-| `@pulse/cli` | Command-line interface |
-| `@pulse/ci` | CI/CD integration — GitHub Actions, PR comments |
+| Package           | Description                                                |
+| ----------------- | ---------------------------------------------------------- |
+| `@foxlight/core`     | Shared data types, component registry, dependency graph    |
+| `@foxlight/analyzer` | Static analysis engine — AST scanning, component detection |
+| `@foxlight/bundle`   | Bundle size analysis — Vite and Webpack plugins            |
+| `@foxlight/cli`      | Command-line interface                                     |
+| `@foxlight/ci`       | CI/CD integration — GitHub Actions, PR comments            |
 
 ## Quick Start
 

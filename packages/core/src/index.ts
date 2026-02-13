@@ -1,4 +1,4 @@
-// @pulse/core — Public API
+// @foxlight/core — Public API
 export {
   // Types
   type ComponentId,
@@ -18,7 +18,7 @@ export {
   type CostBreakdownItem,
   type UpgradePreview,
   type UpgradeCheck,
-  type PulseConfig,
+  type FoxlightConfig,
   type BaselineConfig,
   type PluginConfig,
   type ProjectSnapshot,
@@ -26,8 +26,8 @@ export {
   type ComponentModification,
   type BundleDiffEntry,
   type HealthDiffEntry,
-} from "./types.js";
+} from './types.js';
 
-export { ComponentRegistry } from "./registry.js";
-export { DependencyGraph } from "./dependency-graph.js";
-export { loadConfig, createDefaultConfig, detectFramework } from "./config.js";
+export { ComponentRegistry } from './registry.js';
+export { DependencyGraph } from './dependency-graph.js';
+export { loadConfig, createDefaultConfig, detectFramework } from './config.js';

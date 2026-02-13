@@ -1,14 +1,14 @@
-# Pulse
+# Foxlight
 
 ## Project Overview
-Pulse is an open-source front-end intelligence platform providing component health tracking, dependency upgrade previews, and cost analysis. Built as a TypeScript monorepo.
+Foxlight is an open-source front-end intelligence platform providing component health tracking, dependency upgrade previews, and cost analysis. Built as a TypeScript monorepo.
 
 ## Architecture
-- `@pulse/core` — Shared data types, component registry, dependency graph
-- `@pulse/analyzer` — Static analysis engine (AST scanning, component detection)
-- `@pulse/bundle` — Bundle size analysis (Vite/Webpack plugins)
-- `@pulse/cli` — Command-line interface
-- `@pulse/ci` — CI/CD integration (GitHub Actions, PR comments)
+- `@foxlight/core` — Shared data types, component registry, dependency graph
+- `@foxlight/analyzer` — Static analysis engine (AST scanning, component detection)
+- `@foxlight/bundle` — Bundle size analysis (Vite/Webpack plugins)
+- `@foxlight/cli` — Command-line interface
+- `@foxlight/ci` — CI/CD integration (GitHub Actions, PR comments)
 
 ## Development
 - Runtime: Node.js 20+
@@ -19,7 +19,7 @@ Pulse is an open-source front-end intelligence platform providing component heal
 
 ## Conventions
 - All packages live in `packages/`
-- Shared types go in `@pulse/core`
+- Shared types go in `@foxlight/core`
 - Each package extends `tsconfig.base.json`
 - Tests live alongside source as `*.test.ts`
 - Use named exports, avoid default exports

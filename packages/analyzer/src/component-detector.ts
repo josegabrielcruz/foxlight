@@ -1,13 +1,18 @@
 // ============================================================
-// @pulse/analyzer — Component Detector
+// @foxlight/analyzer — Component Detector
 //
 // Takes raw AST analysis (from ast-scanner) and determines
 // which functions/exports are actually UI components vs.
 // plain utility functions. Framework-aware.
 // ============================================================
 
-import type { ComponentInfo, Framework, ExportKind, PropInfo } from "@pulse/core";
-import type { FileAnalysis, FunctionInfo } from "./ast-scanner.js";
+import type {
+  ComponentInfo,
+  Framework,
+  ExportKind,
+  PropInfo,
+} from '@foxlight/core';
+import type { FileAnalysis, FunctionInfo } from './ast-scanner.js';
 
 /**
  * Detect components from a file analysis result.
@@ -15,7 +20,7 @@ import type { FileAnalysis, FunctionInfo } from "./ast-scanner.js";
  */
 export function detectComponents(
   analysis: FileAnalysis,
-  framework: Framework
+  framework: Framework,
 ): ComponentInfo[] {
   const components: ComponentInfo[] = [];
 
@@ -34,22 +39,22 @@ export function detectComponents(
 function isLikelyComponent(
   fn: FunctionInfo,
   _analysis: FileAnalysis,
-  framework: Framework
+  framework: Framework,
 ): boolean {
   // Must be PascalCase (convention for React/Vue/Svelte components)
   if (!/^[A-Z]/.test(fn.name)) return false;
 
   // Framework-specific checks
   switch (framework) {
-    case "react":
+    case 'react':
       // React components return JSX
       return fn.returnsJsx;
 
-    case "vue":
+    case 'vue':
       // Vue SFCs are handled separately; in .ts files, look for defineComponent
       return fn.returnsJsx;
 
-    case "svelte":
+    case 'svelte':
       // Svelte components are .svelte files; .ts helpers aren't components
       return fn.returnsJsx;
 
@@ -65,17 +70,17 @@ function isLikelyComponent(
 function toComponentInfo(
   fn: FunctionInfo,
   analysis: FileAnalysis,
-  framework: Framework
+  framework: Framework,
 ): ComponentInfo {
   const id = `${analysis.filePath}#${fn.name}`;
 
   // Determine export kind
-  let exportKind: ExportKind = "named";
+  let exportKind: ExportKind = 'named';
   const exp = analysis.exports.find((e) => e.name === fn.name);
   if (exp?.isDefault) {
-    exportKind = "default";
-  } else if (exp?.kind === "re-export") {
-    exportKind = "re-export";
+    exportKind = 'default';
+  } else if (exp?.kind === 're-export') {
+    exportKind = 're-export';
   }
 
   // Extract props from first parameter
@@ -88,7 +93,7 @@ function toComponentInfo(
 
   // Find npm package dependencies
   const dependencies = analysis.imports
-    .filter((imp) => !imp.target.startsWith(".") && !imp.target.startsWith("/"))
+    .filter((imp) => !imp.target.startsWith('.') && !imp.target.startsWith('/'))
     .map((imp) => imp.target);
 
   return {
@@ -127,7 +132,8 @@ function extractProps(fn: FunctionInfo): PropInfo[] {
       name: firstParam.name,
       type: firstParam.type,
       required: true,
-      description: "Auto-detected parameter — full prop extraction requires type analysis",
+      description:
+        'Auto-detected parameter — full prop extraction requires type analysis',
     },
   ];
 }
@@ -137,7 +143,7 @@ function extractProps(fn: FunctionInfo): PropInfo[] {
  * This connects the "children" references (forward) to "usedBy" references (backward).
  */
 export function crossReferenceComponents(
-  components: ComponentInfo[]
+  components: ComponentInfo[],
 ): ComponentInfo[] {
   const byName = new Map<string, ComponentInfo>();
   for (const comp of components) {
