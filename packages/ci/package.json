@@ -1,0 +1,24 @@
+{
+  "name": "@pulse/ci",
+  "version": "0.1.0",
+  "description": "CI/CD integration for Pulse — GitHub PR comments, check runs, and snapshot comparison.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch"
+  },
+  "dependencies": {
+    "@pulse/core": "*",
+    "@pulse/analyzer": "*"
+  },
+  "files": ["dist"],
+  "license": "MIT"
+}

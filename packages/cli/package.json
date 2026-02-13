@@ -1,0 +1,28 @@
+{
+  "name": "@pulse/cli",
+  "version": "0.1.0",
+  "description": "Command-line interface for Pulse — analyze components, check health, run upgrades.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "pulse": "./dist/index.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch"
+  },
+  "dependencies": {
+    "@pulse/core": "*",
+    "@pulse/analyzer": "*",
+    "@pulse/bundle": "*"
+  },
+  "files": ["dist"],
+  "license": "MIT"
+}

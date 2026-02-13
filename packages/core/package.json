@@ -1,0 +1,20 @@
+{
+  "name": "@pulse/core",
+  "version": "0.1.0",
+  "description": "Shared data types, component registry, and dependency graph for Pulse.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch"
+  },
+  "files": ["dist"],
+  "license": "MIT"
+}

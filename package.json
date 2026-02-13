@@ -1,0 +1,32 @@
+{
+  "name": "pulse",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Open-source front-end intelligence platform — component health, dependency upgrade previews, and cost analysis.",
+  "author": "",
+  "license": "MIT",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build -w packages/core && npm run build -w packages/analyzer && npm run build -w packages/bundle && npm run build -w packages/cli && npm run build -w packages/ci",
+    "dev": "npm run dev --workspaces --if-present",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint packages/*/src/**/*.ts",
+    "typecheck": "tsc --build",
+    "clean": "rm -rf packages/*/dist && rm -rf node_modules/.cache"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "eslint": "^9.0.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.4.0",
+    "vitest": "^2.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

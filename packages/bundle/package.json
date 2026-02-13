@@ -1,0 +1,33 @@
+{
+  "name": "@pulse/bundle",
+  "version": "0.1.0",
+  "description": "Bundle size analysis for Pulse — Vite and Webpack plugins for per-component size tracking.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./vite": {
+      "types": "./dist/plugins/vite-plugin.d.ts",
+      "import": "./dist/plugins/vite-plugin.js"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch"
+  },
+  "dependencies": {
+    "@pulse/core": "*"
+  },
+  "peerDependencies": {
+    "vite": "^5.0.0 || ^6.0.0"
+  },
+  "peerDependenciesMeta": {
+    "vite": { "optional": true }
+  },
+  "files": ["dist"],
+  "license": "MIT"
+}

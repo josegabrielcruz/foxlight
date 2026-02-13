@@ -1,0 +1,10 @@
+{
+  "files": [],
+  "references": [
+    { "path": "packages/core" },
+    { "path": "packages/analyzer" },
+    { "path": "packages/bundle" },
+    { "path": "packages/cli" },
+    { "path": "packages/ci" }
+  ]
+}
