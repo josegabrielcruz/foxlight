@@ -13,6 +13,10 @@
     "./vite": {
       "types": "./dist/plugins/vite-plugin.d.ts",
       "import": "./dist/plugins/vite-plugin.js"
+    },
+    "./webpack": {
+      "types": "./dist/plugins/webpack-plugin.d.ts",
+      "import": "./dist/plugins/webpack-plugin.js"
     }
   },
   "scripts": {
@@ -23,10 +27,14 @@
     "@foxlight/core": "*"
   },
   "peerDependencies": {
-    "vite": "^5.0.0 || ^6.0.0"
+    "vite": "^5.0.0 || ^6.0.0",
+    "webpack": "^5.0.0"
   },
   "peerDependenciesMeta": {
     "vite": {
+      "optional": true
+    },
+    "webpack": {
       "optional": true
     }
   },

@@ -9,3 +9,6 @@ export type { ModuleEntry } from './size-tracker.js';
 
 export { foxlightBundle } from './plugins/vite-plugin.js';
 export type { FoxlightVitePluginOptions } from './plugins/vite-plugin.js';
+
+export { FoxlightWebpackPlugin } from './plugins/webpack-plugin.js';
+export type { FoxlightWebpackPluginOptions } from './plugins/webpack-plugin.js';

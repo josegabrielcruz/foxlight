@@ -73,10 +73,7 @@ export function detectGitHubEnv(): Partial<GitHubConfig> {
 /**
  * Post a Foxlight analysis comment on a GitHub PR.
  */
-export async function postPRComment(
-  config: GitHubConfig,
-  diff: SnapshotDiff,
-): Promise<void> {
+export async function postPRComment(config: GitHubConfig, diff: SnapshotDiff): Promise<void> {
   const body = generateCommentBody(diff);
   const { apiUrl = 'https://api.github.com' } = config;
   const url = `${apiUrl}/repos/${config.owner}/${config.repo}/issues/${config.prNumber}/comments`;
@@ -113,9 +110,7 @@ export async function postPRComment(
 /**
  * Find an existing Foxlight comment on the PR (to update instead of creating a new one).
  */
-async function findExistingComment(
-  config: GitHubConfig,
-): Promise<number | null> {
+async function findExistingComment(config: GitHubConfig): Promise<number | null> {
   const { apiUrl = 'https://api.github.com' } = config;
   const url = `${apiUrl}/repos/${config.owner}/${config.repo}/issues/${config.prNumber}/comments`;
 
@@ -132,9 +127,7 @@ async function findExistingComment(
     id: number;
     body: string;
   }>;
-  const foxlightComment = comments.find((c) =>
-    c.body.includes('<!-- foxlight-report -->'),
-  );
+  const foxlightComment = comments.find((c) => c.body.includes('<!-- foxlight-report -->'));
 
   return foxlightComment?.id ?? null;
 }
@@ -178,9 +171,7 @@ export function generateCommentBody(diff: SnapshotDiff): string {
 
   // Bundle size changes
   if (diff.bundleDiff.length > 0) {
-    const significant = diff.bundleDiff.filter(
-      (b) => Math.abs(b.delta.gzip) > 100,
-    );
+    const significant = diff.bundleDiff.filter((b) => Math.abs(b.delta.gzip) > 100);
     if (significant.length > 0) {
       lines.push('### Bundle Size Changes', '');
       lines.push(
@@ -222,12 +213,9 @@ function formatModifications(mods: ComponentModification[]): string[] {
   const lines: string[] = [];
   for (const mod of mods) {
     const changes: string[] = [];
-    if (mod.propsAdded.length > 0)
-      changes.push(`+${mod.propsAdded.length} props`);
-    if (mod.propsRemoved.length > 0)
-      changes.push(`-${mod.propsRemoved.length} props`);
-    if (mod.propsModified.length > 0)
-      changes.push(`~${mod.propsModified.length} props changed`);
+    if (mod.propsAdded.length > 0) changes.push(`+${mod.propsAdded.length} props`);
+    if (mod.propsRemoved.length > 0) changes.push(`-${mod.propsRemoved.length} props`);
+    if (mod.propsModified.length > 0) changes.push(`~${mod.propsModified.length} props changed`);
     if (mod.changes.length > 0) changes.push(...mod.changes);
 
     lines.push(`  - \`${mod.componentId}\`: ${changes.join(', ')}`);
@@ -244,4 +232,117 @@ function formatBundleRow(entry: BundleDiffEntry): string {
 function formatHealthRow(entry: HealthDiffEntry): string {
   const emoji = entry.delta > 0 ? '📈' : '📉';
   return `| \`${entry.componentId}\` | ${entry.beforeScore} | ${entry.afterScore} | ${emoji} ${entry.delta > 0 ? '+' : ''}${entry.delta} |`;
+}
+
+// -----------------------------------------------------------
+// GitHub Check Runs API
+// -----------------------------------------------------------
+
+/** Options for creating a GitHub check run. */
+export interface CheckRunOptions {
+  /** Name of the check (e.g., "Foxlight Analysis") */
+  name: string;
+  /** The head SHA to attach the check to */
+  headSha: string;
+}
+
+/**
+ * Create a GitHub Check Run with Foxlight analysis results.
+ * Check Runs appear in the PR's "Checks" tab and can report
+ * success/failure based on configurable thresholds.
+ */
+export async function createCheckRun(
+  config: GitHubConfig,
+  diff: SnapshotDiff,
+  options: CheckRunOptions,
+): Promise<void> {
+  const { apiUrl = 'https://api.github.com' } = config;
+  const url = `${apiUrl}/repos/${config.owner}/${config.repo}/check-runs`;
+
+  const { conclusion, summary, annotations } = evaluateCheckResult(diff);
+
+  const body = {
+    name: options.name,
+    head_sha: options.headSha,
+    status: 'completed' as const,
+    conclusion,
+    output: {
+      title: 'Foxlight Analysis',
+      summary,
+      text: generateCommentBody(diff),
+      annotations,
+    },
+  };
+
+  await fetch(url, {
+    method: 'POST',
+    headers: {
+      Authorization: `token ${config.token}`,
+      'Content-Type': 'application/json',
+      Accept: 'application/vnd.github.v3+json',
+    },
+    body: JSON.stringify(body),
+  });
+}
+
+interface CheckAnnotation {
+  path: string;
+  start_line: number;
+  end_line: number;
+  annotation_level: 'notice' | 'warning' | 'failure';
+  message: string;
+  title: string;
+}
+
+interface CheckResult {
+  conclusion: 'success' | 'failure' | 'neutral';
+  summary: string;
+  annotations: CheckAnnotation[];
+}
+
+/**
+ * Evaluate analysis results to determine the check conclusion.
+ */
+function evaluateCheckResult(diff: SnapshotDiff): CheckResult {
+  const annotations: CheckAnnotation[] = [];
+  const issues: string[] = [];
+
+  const { added, removed, modified } = diff.components;
+
+  // Annotate bundle size regressions (>10KB gzip increase)
+  for (const entry of diff.bundleDiff) {
+    if (entry.delta.gzip > 10_240) {
+      issues.push(
+        `Bundle size regression: ${entry.componentId} grew by ${formatBytes(entry.delta.gzip)} (gzip)`,
+      );
+    }
+  }
+
+  // Annotate health score drops (>15 points)
+  for (const entry of diff.healthDiff) {
+    if (entry.delta < -15) {
+      issues.push(
+        `Health regression: ${entry.componentId} dropped from ${entry.beforeScore} to ${entry.afterScore}`,
+      );
+    }
+  }
+
+  // Build summary
+  const summaryParts: string[] = [];
+  if (added.length > 0) summaryParts.push(`${added.length} component(s) added`);
+  if (removed.length > 0) summaryParts.push(`${removed.length} component(s) removed`);
+  if (modified.length > 0) summaryParts.push(`${modified.length} component(s) modified`);
+  if (issues.length > 0) summaryParts.push(`${issues.length} issue(s) detected`);
+
+  const summary =
+    summaryParts.length > 0 ? summaryParts.join(', ') : 'No significant changes detected.';
+
+  const conclusion: 'success' | 'failure' | 'neutral' =
+    issues.length > 0
+      ? 'failure'
+      : added.length + removed.length + modified.length > 0
+        ? 'success'
+        : 'neutral';
+
+  return { conclusion, summary, annotations };
 }

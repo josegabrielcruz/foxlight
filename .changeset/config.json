@@ -1,0 +1,13 @@
+{
+  "$schema": "https://unpkg.com/@changesets/config@3.0.0/schema.json",
+  "changelog": "@changesets/cli/changelog",
+  "commit": false,
+  "fixed": [],
+  "linked": [
+    ["@foxlight/core", "@foxlight/analyzer", "@foxlight/bundle", "@foxlight/cli", "@foxlight/ci"]
+  ],
+  "access": "public",
+  "baseBranch": "main",
+  "updateInternalDependencies": "patch",
+  "ignore": []
+}

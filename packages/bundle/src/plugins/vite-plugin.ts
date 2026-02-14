@@ -51,8 +51,7 @@ export interface FoxlightVitePluginOptions {
  * ```
  */
 export function foxlightBundle(options: FoxlightVitePluginOptions = {}): Plugin {
-  const { outputPath = '.foxlight/bundle-report.json', printSummary = true } =
-    options;
+  const { outputPath = '.foxlight/bundle-report.json', printSummary = true } = options;
 
   let rootDir: string;
 
@@ -97,10 +96,69 @@ export function foxlightBundle(options: FoxlightVitePluginOptions = {}): Plugin 
       // Compute per-component info if component mapping is provided
       let componentInfo: ComponentBundleInfo[] | undefined;
       if (options.componentModules) {
+        // Build a dependency map from Rollup's module graph
+        const moduleDeps = new Map<string, string[]>();
+        for (const [_fileName, chunk] of Object.entries(bundle)) {
+          if (chunk.type !== 'chunk') continue;
+          if (chunk.modules) {
+            for (const moduleId of Object.keys(
+              chunk.modules as Record<string, Rollup.RenderedModule>,
+            )) {
+              if (!moduleDeps.has(moduleId)) {
+                moduleDeps.set(moduleId, []);
+              }
+            }
+          }
+          // Use Rollup's importedBindings / imports for dependency info
+          if (chunk.imports) {
+            for (const imp of chunk.imports) {
+              // Find modules that belong to each imported chunk
+              const importedChunk = bundle[imp];
+              if (importedChunk && importedChunk.type === 'chunk' && importedChunk.modules) {
+                for (const moduleId of Object.keys(
+                  chunk.modules as Record<string, Rollup.RenderedModule>,
+                )) {
+                  const deps = moduleDeps.get(moduleId) ?? [];
+                  for (const depId of Object.keys(
+                    importedChunk.modules as Record<string, Rollup.RenderedModule>,
+                  )) {
+                    if (!deps.includes(depId)) {
+                      deps.push(depId);
+                    }
+                  }
+                  moduleDeps.set(moduleId, deps);
+                }
+              }
+            }
+          }
+        }
+
+        const dependencyResolver = (moduleId: string): string[] => {
+          const visited = new Set<string>();
+          const queue = [moduleId];
+          const result: string[] = [];
+
+          while (queue.length > 0) {
+            const current = queue.shift()!;
+            if (visited.has(current)) continue;
+            visited.add(current);
+
+            const deps = moduleDeps.get(current) ?? [];
+            for (const dep of deps) {
+              if (!visited.has(dep)) {
+                result.push(dep);
+                queue.push(dep);
+              }
+            }
+          }
+
+          return result;
+        };
+
         componentInfo = computeComponentBundleInfo(
           options.componentModules,
           modules,
-          () => [], // TODO: integrate with DependencyGraph
+          dependencyResolver,
         );
       }
 
@@ -145,9 +203,7 @@ export function foxlightBundle(options: FoxlightVitePluginOptions = {}): Plugin 
 
         if (componentInfo && componentInfo.length > 0) {
           console.log('\n   Components by size (gzip):');
-          const sorted = [...componentInfo].sort(
-            (a, b) => b.selfSize.gzip - a.selfSize.gzip,
-          );
+          const sorted = [...componentInfo].sort((a, b) => b.selfSize.gzip - a.selfSize.gzip);
           for (const comp of sorted.slice(0, 10)) {
             console.log(
               `     ${formatBytes(comp.selfSize.gzip).padStart(10)}  ${comp.componentId}`,

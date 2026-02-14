@@ -13,18 +13,35 @@
     "dev": "npm run dev --workspaces --if-present",
     "test": "vitest run",
     "test:watch": "vitest",
-    "lint": "eslint packages/*/src/**/*.ts",
+    "lint": "eslint 'packages/*/src/**/*.ts'",
+    "lint:fix": "eslint 'packages/*/src/**/*.ts' --fix",
+    "format": "prettier --write 'packages/*/src/**/*.ts'",
+    "format:check": "prettier --check 'packages/*/src/**/*.ts'",
     "typecheck": "tsc --build",
-    "clean": "rm -rf packages/*/dist && rm -rf node_modules/.cache"
+    "clean": "rm -rf packages/*/dist && rm -rf node_modules/.cache",
+    "prepare": "husky",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "release": "npm run build && changeset publish"
   },
   "devDependencies": {
+    "@eslint/js": "^9.0.0",
     "@types/node": "^20.11.0",
     "eslint": "^9.0.0",
+    "prettier": "^3.2.0",
     "tsup": "^8.0.0",
     "typescript": "^5.4.0",
+    "typescript-eslint": "^8.0.0",
     "vitest": "^2.0.0",
-    "@typescript-eslint/eslint-plugin": "^8.0.0",
-    "@typescript-eslint/parser": "^8.0.0"
+    "husky": "^9.0.0",
+    "lint-staged": "^15.0.0",
+    "@changesets/cli": "^2.27.0"
+  },
+  "lint-staged": {
+    "packages/*/src/**/*.ts": [
+      "eslint --fix",
+      "prettier --write"
+    ]
   },
   "engines": {
     "node": ">=20.0.0"

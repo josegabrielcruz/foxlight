@@ -1,7 +1,7 @@
 import { defineConfig } from 'tsup';
 
 export default defineConfig({
-  entry: ['src/index.ts', 'src/plugins/vite-plugin.ts'],
+  entry: ['src/index.ts', 'src/plugins/vite-plugin.ts', 'src/plugins/webpack-plugin.ts'],
   format: ['esm'],
   dts: true,
   tsconfig: 'tsconfig.build.json',
