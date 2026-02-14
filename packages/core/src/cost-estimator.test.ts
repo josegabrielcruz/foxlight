@@ -17,6 +17,7 @@ function makeBundleInfo(rawBytes: number, gzipBytes?: number): ComponentBundleIn
     {
       componentId: 'TestComponent',
       selfSize: { raw: rawBytes, gzip: gzipBytes ?? Math.round(rawBytes * 0.3) },
+      exclusiveSize: { raw: rawBytes, gzip: gzipBytes ?? Math.round(rawBytes * 0.3) },
       totalSize: { raw: rawBytes, gzip: gzipBytes ?? Math.round(rawBytes * 0.3) },
       chunks: ['main.js'],
     },
@@ -32,14 +33,17 @@ describe('COST_MODELS', () => {
     expect(Object.keys(COST_MODELS).sort()).toEqual(['aws', 'cloudflare', 'netlify', 'vercel']);
   });
 
-  it.each(['vercel', 'netlify', 'aws', 'cloudflare'])('%s has expected numeric fields', (provider) => {
-    const model = COST_MODELS[provider]!;
-    expect(model.provider).toBe(provider);
-    expect(typeof model.invocationCostPer1M).toBe('number');
-    expect(typeof model.bandwidthCostPerGB).toBe('number');
-    expect(typeof model.storageCostPerGB).toBe('number');
-    expect(typeof model.baseCost).toBe('number');
-  });
+  it.each(['vercel', 'netlify', 'aws', 'cloudflare'])(
+    '%s has expected numeric fields',
+    (provider) => {
+      const model = COST_MODELS[provider]!;
+      expect(model.provider).toBe(provider);
+      expect(typeof model.invocationCostPer1M).toBe('number');
+      expect(typeof model.bandwidthCostPerGB).toBe('number');
+      expect(typeof model.storageCostPerGB).toBe('number');
+      expect(typeof model.baseCost).toBe('number');
+    },
+  );
 
   it('cloudflare has zero bandwidth cost', () => {
     expect(COST_MODELS['cloudflare']!.bandwidthCostPerGB).toBe(0);
@@ -77,7 +81,7 @@ describe('estimateMonthlyCost', () => {
 
     // Verify it's purely invocation + edge costs (no bandwidth / storage)
     const zeroBandwidthModel: CostModel = {
-      provider: 'test',
+      provider: 'custom',
       invocationCostPer1M: 0,
       bandwidthCostPerGB: 0,
       storageCostPerGB: 0,
@@ -95,7 +99,7 @@ describe('estimateMonthlyCost', () => {
 
   it('includes base cost from the model', () => {
     const baseModel: CostModel = {
-      provider: 'test',
+      provider: 'custom',
       invocationCostPer1M: 0,
       bandwidthCostPerGB: 0,
       storageCostPerGB: 0,

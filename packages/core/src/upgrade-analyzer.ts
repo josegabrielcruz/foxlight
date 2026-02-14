@@ -258,11 +258,9 @@ async function getCurrentVersion(rootDir: string, packageName: string): Promise<
 
 async function getLatestVersion(packageName: string): Promise<string> {
   try {
-    const { stdout } = await execFileAsync(
-      'npm',
-      ['view', packageName, 'version'],
-      { timeout: 10_000 },
-    );
+    const { stdout } = await execFileAsync('npm', ['view', packageName, 'version'], {
+      timeout: 10_000,
+    });
     return stdout.trim();
   } catch {
     return '0.0.0';

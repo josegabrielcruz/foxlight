@@ -38,5 +38,10 @@
   "bugs": {
     "url": "https://github.com/josegabrielcruz/foxlight/issues"
   },
-  "keywords": ["foxlight", "cli", "component-health", "frontend-tools"]
+  "keywords": [
+    "foxlight",
+    "cli",
+    "component-health",
+    "frontend-tools"
+  ]
 }

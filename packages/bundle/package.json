@@ -52,5 +52,11 @@
   "bugs": {
     "url": "https://github.com/josegabrielcruz/foxlight/issues"
   },
-  "keywords": ["foxlight", "bundle-size", "vite-plugin", "webpack-plugin", "performance"]
+  "keywords": [
+    "foxlight",
+    "bundle-size",
+    "vite-plugin",
+    "webpack-plugin",
+    "performance"
+  ]
 }

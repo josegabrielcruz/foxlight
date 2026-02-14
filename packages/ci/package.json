@@ -33,5 +33,11 @@
   "bugs": {
     "url": "https://github.com/josegabrielcruz/foxlight/issues"
   },
-  "keywords": ["foxlight", "ci", "github-actions", "gitlab", "pr-comments"]
+  "keywords": [
+    "foxlight",
+    "ci",
+    "github-actions",
+    "gitlab",
+    "pr-comments"
+  ]
 }

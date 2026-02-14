@@ -32,7 +32,12 @@ beforeEach(async () => {
 
   // Default: make execFile callback-based mock work with promisify
   execFileMock.mockImplementation(
-    (_cmd: string, _args: string[], _opts: unknown, cb?: (err: Error | null, result: { stdout: string; stderr: string }) => void) => {
+    (
+      _cmd: string,
+      _args: string[],
+      _opts: unknown,
+      cb?: (err: Error | null, result: { stdout: string; stderr: string }) => void,
+    ) => {
       if (cb) cb(null, { stdout: '', stderr: '' });
     },
   );
@@ -56,7 +61,12 @@ beforeEach(async () => {
 
 function mockNpmView(responses: Record<string, string>) {
   execFileMock.mockImplementation(
-    (_cmd: string, args: string[], _opts: unknown, cb?: (err: Error | null, result: { stdout: string; stderr: string }) => void) => {
+    (
+      _cmd: string,
+      args: string[],
+      _opts: unknown,
+      cb?: (err: Error | null, result: { stdout: string; stderr: string }) => void,
+    ) => {
       const argStr = args.join(' ');
       for (const [key, value] of Object.entries(responses)) {
         if (argStr.includes(key)) {
@@ -93,9 +103,9 @@ function makeComponent(name: string, deps: string[] = []): ComponentInfo {
 describe('analyzeUpgrade', () => {
   it('returns an upgrade preview with checks', async () => {
     mockNpmView({
-      'version': '19.0.0',
-      'peerDependencies': '',
-      'deprecated': '',
+      version: '19.0.0',
+      peerDependencies: '',
+      deprecated: '',
     });
 
     const result = await analyzeUpgrade({
@@ -113,9 +123,9 @@ describe('analyzeUpgrade', () => {
 
   it('detects major version bump as high risk', async () => {
     mockNpmView({
-      'version': '19.0.0',
-      'peerDependencies': '',
-      'deprecated': '',
+      version: '19.0.0',
+      peerDependencies: '',
+      deprecated: '',
     });
 
     const result = await analyzeUpgrade({
@@ -132,9 +142,9 @@ describe('analyzeUpgrade', () => {
 
   it('detects minor version bump as warning', async () => {
     mockNpmView({
-      'version': '18.3.0',
-      'peerDependencies': '',
-      'deprecated': '',
+      version: '18.3.0',
+      peerDependencies: '',
+      deprecated: '',
     });
 
     const result = await analyzeUpgrade({
@@ -149,9 +159,9 @@ describe('analyzeUpgrade', () => {
 
   it('detects patch version bump as pass', async () => {
     mockNpmView({
-      'version': '18.2.1',
-      'peerDependencies': '',
-      'deprecated': '',
+      version: '18.2.1',
+      peerDependencies: '',
+      deprecated: '',
     });
 
     const result = await analyzeUpgrade({
@@ -166,15 +176,12 @@ describe('analyzeUpgrade', () => {
 
   it('reports affected components', async () => {
     mockNpmView({
-      'version': '19.0.0',
-      'peerDependencies': '',
-      'deprecated': '',
+      version: '19.0.0',
+      peerDependencies: '',
+      deprecated: '',
     });
 
-    const components = [
-      makeComponent('Button', ['react']),
-      makeComponent('Card', ['react']),
-    ];
+    const components = [makeComponent('Button', ['react']), makeComponent('Card', ['react'])];
 
     const result = await analyzeUpgrade({
       rootDir: '/project',
@@ -190,9 +197,9 @@ describe('analyzeUpgrade', () => {
 
   it('passes component impact when no components are affected', async () => {
     mockNpmView({
-      'version': '19.0.0',
-      'peerDependencies': '',
-      'deprecated': '',
+      version: '19.0.0',
+      peerDependencies: '',
+      deprecated: '',
     });
 
     const result = await analyzeUpgrade({
@@ -208,9 +215,9 @@ describe('analyzeUpgrade', () => {
 
   it('uses latest version when targetVersion is omitted', async () => {
     mockNpmView({
-      'version': '19.1.0',
-      'peerDependencies': '',
-      'deprecated': '',
+      version: '19.1.0',
+      peerDependencies: '',
+      deprecated: '',
     });
 
     const result = await analyzeUpgrade({
@@ -223,9 +230,9 @@ describe('analyzeUpgrade', () => {
 
   it('returns 0.0.0 for unknown packages in package.json', async () => {
     mockNpmView({
-      'version': '1.0.0',
-      'peerDependencies': '',
-      'deprecated': '',
+      version: '1.0.0',
+      peerDependencies: '',
+      deprecated: '',
     });
 
     const result = await analyzeUpgrade({
@@ -245,9 +252,9 @@ describe('analyzeUpgrade', () => {
 describe('analyzeUpgrades', () => {
   it('returns results for each package', async () => {
     mockNpmView({
-      'version': '19.0.0',
-      'peerDependencies': '',
-      'deprecated': '',
+      version: '19.0.0',
+      peerDependencies: '',
+      deprecated: '',
     });
 
     const results = await analyzeUpgrades('/project', [
@@ -262,9 +269,9 @@ describe('analyzeUpgrades', () => {
 
   it('filters affected components by package', async () => {
     mockNpmView({
-      'version': '19.0.0',
-      'peerDependencies': '',
-      'deprecated': '',
+      version: '19.0.0',
+      peerDependencies: '',
+      deprecated: '',
     });
 
     const components = [

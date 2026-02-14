@@ -36,13 +36,13 @@ npx foxlight health
 
 ## CLI Commands
 
-| Command | Description |
-|---------|-------------|
-| `foxlight init` | Initialize Foxlight in your project |
-| `foxlight analyze` | Scan and discover components |
-| `foxlight health` | Component health dashboard |
-| `foxlight cost` | Estimate hosting costs |
-| `foxlight upgrade <pkg>` | Dependency upgrade impact analysis |
+| Command                  | Description                         |
+| ------------------------ | ----------------------------------- |
+| `foxlight init`          | Initialize Foxlight in your project |
+| `foxlight analyze`       | Scan and discover components        |
+| `foxlight health`        | Component health dashboard          |
+| `foxlight cost`          | Estimate hosting costs              |
+| `foxlight upgrade <pkg>` | Dependency upgrade impact analysis  |
 
 All commands support `--json` for machine-readable output and `--root <dir>` to specify the project root.
 
@@ -82,11 +82,11 @@ Create `.foxlight.json` in your project root:
 }
 ```
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `include` | `string[]` | `["src/**/*.{ts,tsx,js,jsx}"]` | Glob patterns for files to analyze |
-| `exclude` | `string[]` | `["**/node_modules/**", "**/dist/**"]` | Glob patterns to exclude |
-| `framework` | `string` | auto-detected | `react`, `vue`, `svelte`, `angular`, or `web-component` |
+| Option      | Type       | Default                                | Description                                             |
+| ----------- | ---------- | -------------------------------------- | ------------------------------------------------------- |
+| `include`   | `string[]` | `["src/**/*.{ts,tsx,js,jsx}"]`         | Glob patterns for files to analyze                      |
+| `exclude`   | `string[]` | `["**/node_modules/**", "**/dist/**"]` | Glob patterns to exclude                                |
+| `framework` | `string`   | auto-detected                          | `react`, `vue`, `svelte`, `angular`, or `web-component` |
 
 ## CI Integration
 
@@ -111,13 +111,13 @@ foxlight:
 
 ## Packages
 
-| Package | Description |
-|---------|-------------|
-| [`@foxlight/core`](packages/core) | Shared data types, component registry, dependency graph, health scoring, cost estimation |
-| [`@foxlight/analyzer`](packages/analyzer) | Static analysis engine — AST scanning, component detection, Vue/Svelte parsing |
-| [`@foxlight/bundle`](packages/bundle) | Bundle size analysis — Vite and Webpack plugins |
-| [`@foxlight/cli`](packages/cli) | Command-line interface |
-| [`@foxlight/ci`](packages/ci) | CI/CD integration — GitHub Actions, GitLab CI |
+| Package                                   | Description                                                                              |
+| ----------------------------------------- | ---------------------------------------------------------------------------------------- |
+| [`@foxlight/core`](packages/core)         | Shared data types, component registry, dependency graph, health scoring, cost estimation |
+| [`@foxlight/analyzer`](packages/analyzer) | Static analysis engine — AST scanning, component detection, Vue/Svelte parsing           |
+| [`@foxlight/bundle`](packages/bundle)     | Bundle size analysis — Vite and Webpack plugins                                          |
+| [`@foxlight/cli`](packages/cli)           | Command-line interface                                                                   |
+| [`@foxlight/ci`](packages/ci)             | CI/CD integration — GitHub Actions, GitLab CI                                            |
 
 ## Architecture
 

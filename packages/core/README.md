@@ -31,7 +31,7 @@ import {
 
 // Create a registry and add components
 const registry = new ComponentRegistry();
-registry.addComponents([{ id: 'Button', name: 'Button', /* ... */ }]);
+registry.addComponents([{ id: 'Button', name: 'Button' /* ... */ }]);
 
 // Build a dependency graph from imports
 const graph = DependencyGraph.fromImports(imports);
@@ -45,11 +45,7 @@ const health = computeComponentHealth({
 });
 
 // Estimate hosting costs
-const cost = estimateCostImpact(
-  currentBundles,
-  updatedBundles,
-  COST_MODELS.vercel,
-);
+const cost = estimateCostImpact(currentBundles, updatedBundles, COST_MODELS.vercel);
 ```
 
 ## License

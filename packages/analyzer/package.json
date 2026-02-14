@@ -40,5 +40,13 @@
   "bugs": {
     "url": "https://github.com/josegabrielcruz/foxlight/issues"
   },
-  "keywords": ["foxlight", "static-analysis", "ast", "component-detection", "typescript", "vue", "svelte"]
+  "keywords": [
+    "foxlight",
+    "static-analysis",
+    "ast",
+    "component-detection",
+    "typescript",
+    "vue",
+    "svelte"
+  ]
 }

@@ -51,11 +51,7 @@ export async function runUpgrade(options: UpgradeOptions): Promise<void> {
   for (const check of preview.checks) {
     const icon = check.status === 'pass' ? '✓' : check.status === 'warn' ? '⚠' : '✗';
     const colorFn =
-      check.status === 'pass'
-        ? ui.success
-        : check.status === 'warn'
-          ? ui.warn
-          : ui.error;
+      check.status === 'pass' ? ui.success : check.status === 'warn' ? ui.warn : ui.error;
 
     colorFn(`${icon} ${check.name}: ${check.summary}`);
     if (check.details) {

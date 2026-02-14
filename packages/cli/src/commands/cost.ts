@@ -51,9 +51,7 @@ export async function runCost(options: CostOptions): Promise<void> {
   };
 
   // Select which providers to show
-  const providers = provider
-    ? { [provider]: COST_MODELS[provider] }
-    : COST_MODELS;
+  const providers = provider ? { [provider]: COST_MODELS[provider] } : COST_MODELS;
 
   if (provider && !COST_MODELS[provider]) {
     ui.error(`Unknown provider: ${provider}`);
@@ -86,11 +84,11 @@ export async function runCost(options: CostOptions): Promise<void> {
   ui.heading('Cost Estimation');
 
   ui.info('Components:', String(components.length));
-  ui.info('Bundle data:', hasBundleData ? 'available' : 'not yet available — run a build with the Foxlight plugin first');
   ui.info(
-    'Traffic assumption:',
-    `${formatNumber(traffic.monthlyPageViews)} page views/month`,
+    'Bundle data:',
+    hasBundleData ? 'available' : 'not yet available — run a build with the Foxlight plugin first',
   );
+  ui.info('Traffic assumption:', `${formatNumber(traffic.monthlyPageViews)} page views/month`);
 
   if (bundleInfos.length > 0) {
     const totalRaw = bundleInfos.reduce((sum, b) => sum + b.selfSize.raw, 0);

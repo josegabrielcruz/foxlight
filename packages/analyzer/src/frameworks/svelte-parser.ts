@@ -9,11 +9,7 @@
 // full Svelte compiler as a hard dependency.
 // ============================================================
 
-import type {
-  ComponentInfo,
-  Framework,
-  PropInfo,
-} from '@foxlight/core';
+import type { ComponentInfo, Framework, ImportEdge, PropInfo } from '@foxlight/core';
 import { extractImportsFromScript } from '@foxlight/core';
 
 /** Extracted information from a .svelte file. */

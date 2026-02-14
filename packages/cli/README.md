@@ -66,12 +66,12 @@ foxlight upgrade --json              # Output as JSON
 
 ## Global Options
 
-| Option | Description |
-|--------|-------------|
+| Option         | Description                           |
+| -------------- | ------------------------------------- |
 | `--root <dir>` | Project root directory (default: `.`) |
-| `--json` | Output results as JSON |
-| `--help` | Show help message |
-| `--version` | Show version number |
+| `--json`       | Output results as JSON                |
+| `--help`       | Show help message                     |
+| `--version`    | Show version number                   |
 
 ## Configuration
 

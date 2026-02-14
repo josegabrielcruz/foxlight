@@ -65,9 +65,7 @@ async function main(): Promise<void> {
         rootDir,
         json,
         provider: flags.get('provider') ?? flags.get('p'),
-        pageViews: flags.has('page-views')
-          ? parseInt(flags.get('page-views')!, 10)
-          : undefined,
+        pageViews: flags.has('page-views') ? parseInt(flags.get('page-views')!, 10) : undefined,
       });
       break;
 

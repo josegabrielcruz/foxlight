@@ -26,10 +26,7 @@ describe('extractImportsFromScript', () => {
   });
 
   it('extracts mixed default + named imports', () => {
-    const result = extractImportsFromScript(
-      `import React, { useState } from 'react';`,
-      FILE,
-    );
+    const result = extractImportsFromScript(`import React, { useState } from 'react';`, FILE);
     expect(result).toHaveLength(1);
     expect(result[0]!.specifiers).toEqual([
       { imported: 'default', local: 'React' },
@@ -51,9 +48,7 @@ describe('extractImportsFromScript', () => {
     );
     expect(result).toHaveLength(1);
     expect(result[0]!.typeOnly).toBe(true);
-    expect(result[0]!.specifiers).toEqual([
-      { imported: 'ComponentInfo', local: 'ComponentInfo' },
-    ]);
+    expect(result[0]!.specifiers).toEqual([{ imported: 'ComponentInfo', local: 'ComponentInfo' }]);
   });
 
   it('handles aliased named imports', () => {

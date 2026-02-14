@@ -6,7 +6,6 @@
 // snapshot, and posts results as PR comments or MR notes.
 // ============================================================
 
-import { analyzeProject } from '@foxlight/analyzer';
 import {
   compareSnapshots,
   hasSignificantChanges,
@@ -31,8 +30,7 @@ export async function runCI(options: CIOptions): Promise<void> {
   const outputPath = options.outputPath ?? '.foxlight/snapshot.json';
 
   // Detect CI environment
-  const commitSha =
-    process.env['GITHUB_SHA'] ?? process.env['CI_COMMIT_SHA'] ?? 'local';
+  const commitSha = process.env['GITHUB_SHA'] ?? process.env['CI_COMMIT_SHA'] ?? 'local';
   const branch =
     process.env['GITHUB_HEAD_REF'] ??
     process.env['CI_COMMIT_BRANCH'] ??
@@ -83,11 +81,9 @@ export async function runCI(options: CIOptions): Promise<void> {
       await postPRComment(config, diff);
       ui.progressDone('PR comment posted');
 
-      await createCheckRun({
-        ...config,
+      await createCheckRun(config, diff, {
         name: 'Foxlight Analysis',
         headSha: commitSha,
-        diff,
       });
       ui.success('Check run created');
     } catch (err) {
@@ -97,17 +93,18 @@ export async function runCI(options: CIOptions): Promise<void> {
 
   // Post to GitLab if in GitLab CI
   const gitlabEnv = detectGitLabEnv();
-  if (gitlabEnv) {
+  const hasGitLab = !!(gitlabEnv.token && gitlabEnv.projectId && gitlabEnv.mergeRequestIid);
+  if (hasGitLab) {
     ui.progress('Posting GitLab MR note');
     try {
-      await postMRComment(gitlabEnv, diff);
+      await postMRComment(gitlabEnv as import('@foxlight/ci').GitLabConfig, diff);
       ui.progressDone('MR note posted');
     } catch (err) {
       ui.warn(`GitLab integration failed: ${err instanceof Error ? err.message : String(err)}`);
     }
   }
 
-  if (!githubEnv.token && !gitlabEnv) {
+  if (!githubEnv.token && !hasGitLab) {
     ui.info('CI platform:', 'not detected (running locally)');
     ui.info('Snapshot saved to:', outputPath);
   }

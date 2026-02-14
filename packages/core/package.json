@@ -29,5 +29,11 @@
   "bugs": {
     "url": "https://github.com/josegabrielcruz/foxlight/issues"
   },
-  "keywords": ["foxlight", "component-registry", "dependency-graph", "frontend", "health-scoring"]
+  "keywords": [
+    "foxlight",
+    "component-registry",
+    "dependency-graph",
+    "frontend",
+    "health-scoring"
+  ]
 }

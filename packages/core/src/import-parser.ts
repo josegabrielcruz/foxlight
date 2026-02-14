@@ -20,10 +20,7 @@ import type { ImportEdge, ImportSpecifier } from './types.js';
  * @param script — The JavaScript/TypeScript source text to scan.
  * @param filePath — The file this script belongs to (used as the `source` in ImportEdge).
  */
-export function extractImportsFromScript(
-  script: string,
-  filePath: string,
-): ImportEdge[] {
+export function extractImportsFromScript(script: string, filePath: string): ImportEdge[] {
   const imports: ImportEdge[] = [];
   const importRegex =
     /import\s+(?:(?:type\s+)?(?:(\{[^}]+\})|(\w+)(?:\s*,\s*(\{[^}]+\}))?|(\*\s+as\s+\w+)))\s+from\s+['"]([^'"]+)['"]/g;
