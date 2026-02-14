@@ -10,7 +10,6 @@
 // ============================================================
 
 import type {
-  ComponentId,
   ComponentInfo,
   ComponentBundleInfo,
   ComponentHealth,

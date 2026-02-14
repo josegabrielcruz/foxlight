@@ -24,7 +24,7 @@
     "dev": "tsup --watch"
   },
   "dependencies": {
-    "@foxlight/core": "*"
+    "@foxlight/core": "workspace:*"
   },
   "peerDependencies": {
     "vite": "^5.0.0 || ^6.0.0",
@@ -41,5 +41,16 @@
   "files": [
     "dist"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "author": "Jose Cruz",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/josegabrielcruz/foxlight.git",
+    "directory": "packages/bundle"
+  },
+  "homepage": "https://github.com/josegabrielcruz/foxlight/tree/master/packages/bundle#readme",
+  "bugs": {
+    "url": "https://github.com/josegabrielcruz/foxlight/issues"
+  },
+  "keywords": ["foxlight", "bundle-size", "vite-plugin", "webpack-plugin", "performance"]
 }

@@ -6,10 +6,13 @@
 // and changelog information.
 // ============================================================
 
-import { execSync } from 'node:child_process';
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import type { UpgradePreview, UpgradeCheck, ComponentInfo } from './types.js';
+
+const execFileAsync = promisify(execFile);
 
 // -----------------------------------------------------------
 // Public API
@@ -167,13 +170,13 @@ async function checkPeerDependencies(
   targetVersion: string,
 ): Promise<UpgradeCheck> {
   try {
-    // Use npm view to check peer dependencies of the target version
-    const result = execSync(
-      `npm view ${packageName}@${targetVersion} peerDependencies --json 2>/dev/null`,
-      { cwd: rootDir, encoding: 'utf-8', timeout: 10_000 },
+    const { stdout } = await execFileAsync(
+      'npm',
+      ['view', `${packageName}@${targetVersion}`, 'peerDependencies', '--json'],
+      { cwd: rootDir, timeout: 10_000 },
     );
 
-    if (!result.trim()) {
+    if (!stdout.trim()) {
       return {
         name: 'Peer Dependencies',
         status: 'pass',
@@ -181,7 +184,7 @@ async function checkPeerDependencies(
       };
     }
 
-    const peerDeps = JSON.parse(result) as Record<string, string>;
+    const peerDeps = JSON.parse(stdout) as Record<string, string>;
     const peerList = Object.entries(peerDeps)
       .map(([name, range]) => `${name}@${range}`)
       .join(', ');
@@ -203,17 +206,18 @@ async function checkPeerDependencies(
 
 async function checkDeprecation(packageName: string, targetVersion: string): Promise<UpgradeCheck> {
   try {
-    const result = execSync(
-      `npm view ${packageName}@${targetVersion} deprecated --json 2>/dev/null`,
-      { encoding: 'utf-8', timeout: 10_000 },
+    const { stdout } = await execFileAsync(
+      'npm',
+      ['view', `${packageName}@${targetVersion}`, 'deprecated', '--json'],
+      { timeout: 10_000 },
     );
 
-    if (result.trim() && result.trim() !== 'undefined') {
+    if (stdout.trim() && stdout.trim() !== 'undefined') {
       return {
         name: 'Deprecation',
         status: 'fail',
         summary: `Version ${targetVersion} is deprecated.`,
-        details: result.trim().replace(/^"|"$/g, ''),
+        details: stdout.trim().replace(/^"|"$/g, ''),
       };
     }
 
@@ -252,15 +256,16 @@ async function getCurrentVersion(rootDir: string, packageName: string): Promise<
   }
 }
 
-function getLatestVersion(packageName: string): Promise<string> {
+async function getLatestVersion(packageName: string): Promise<string> {
   try {
-    const result = execSync(`npm view ${packageName} version 2>/dev/null`, {
-      encoding: 'utf-8',
-      timeout: 10_000,
-    });
-    return Promise.resolve(result.trim());
+    const { stdout } = await execFileAsync(
+      'npm',
+      ['view', packageName, 'version'],
+      { timeout: 10_000 },
+    );
+    return stdout.trim();
   } catch {
-    return Promise.resolve('0.0.0');
+    return '0.0.0';
   }
 }
 

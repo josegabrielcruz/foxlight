@@ -3,8 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "description": "Open-source front-end intelligence platform — component health, dependency upgrade previews, and cost analysis.",
-  "author": "",
+  "author": "Jose Cruz",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/josegabrielcruz/foxlight.git"
+  },
+  "homepage": "https://github.com/josegabrielcruz/foxlight#readme",
+  "bugs": {
+    "url": "https://github.com/josegabrielcruz/foxlight/issues"
+  },
   "workspaces": [
     "packages/*"
   ],

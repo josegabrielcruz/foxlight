@@ -14,6 +14,9 @@ import { resolve } from 'node:path';
 import { runAnalyze } from './commands/analyze.js';
 import { runHealth } from './commands/health.js';
 import { runInit } from './commands/init.js';
+import { runCost } from './commands/cost.js';
+import { runUpgrade } from './commands/upgrade.js';
+import { runCI } from './commands/ci.js';
 import { ui } from './utils/output.js';
 
 async function main(): Promise<void> {
@@ -57,6 +60,42 @@ async function main(): Promise<void> {
       });
       break;
 
+    case 'cost':
+      await runCost({
+        rootDir,
+        json,
+        provider: flags.get('provider') ?? flags.get('p'),
+        pageViews: flags.has('page-views')
+          ? parseInt(flags.get('page-views')!, 10)
+          : undefined,
+      });
+      break;
+
+    case 'upgrade': {
+      const packageName = args[1];
+      if (!packageName || packageName.startsWith('--')) {
+        ui.error('Please specify a package name: foxlight upgrade <package>');
+        process.exitCode = 1;
+        break;
+      }
+      await runUpgrade({
+        rootDir,
+        json,
+        packageName,
+        targetVersion: flags.get('to') ?? flags.get('target'),
+      });
+      break;
+    }
+
+    case 'ci':
+      await runCI({
+        rootDir,
+        json,
+        basePath: flags.get('base'),
+        outputPath: flags.get('output'),
+      });
+      break;
+
     case 'help':
     case '--help':
     case '-h':
@@ -85,11 +124,16 @@ function printHelp(): void {
   console.log('    init              Initialize Foxlight in your project');
   console.log('    analyze           Scan project and discover components');
   console.log('    health            Show component health dashboard');
+  console.log('    cost              Estimate hosting costs by provider');
+  console.log('    upgrade <pkg>     Analyze dependency upgrade impact');
+  console.log('    ci                Run CI analysis and post results');
   console.log('');
   console.log('  Options:');
   console.log('    --root <dir>      Project root directory (default: .)');
   console.log('    --json            Output results as JSON');
   console.log('    --component <name> Filter health to a specific component');
+  console.log('    --provider <name> Cost provider (vercel, netlify, aws, cloudflare)');
+  console.log('    --to <version>    Target version for upgrade command');
   console.log('    --help            Show this help message');
   console.log('    --version         Show version number');
   console.log('');

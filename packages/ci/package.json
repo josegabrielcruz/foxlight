@@ -16,11 +16,22 @@
     "dev": "tsup --watch"
   },
   "dependencies": {
-    "@foxlight/core": "*",
-    "@foxlight/analyzer": "*"
+    "@foxlight/core": "workspace:*",
+    "@foxlight/analyzer": "workspace:*"
   },
   "files": [
     "dist"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "author": "Jose Cruz",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/josegabrielcruz/foxlight.git",
+    "directory": "packages/ci"
+  },
+  "homepage": "https://github.com/josegabrielcruz/foxlight/tree/master/packages/ci#readme",
+  "bugs": {
+    "url": "https://github.com/josegabrielcruz/foxlight/issues"
+  },
+  "keywords": ["foxlight", "ci", "github-actions", "gitlab", "pr-comments"]
 }

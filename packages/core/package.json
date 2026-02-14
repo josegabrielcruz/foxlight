@@ -18,5 +18,16 @@
   "files": [
     "dist"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "author": "Jose Cruz",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/josegabrielcruz/foxlight.git",
+    "directory": "packages/core"
+  },
+  "homepage": "https://github.com/josegabrielcruz/foxlight/tree/master/packages/core#readme",
+  "bugs": {
+    "url": "https://github.com/josegabrielcruz/foxlight/issues"
+  },
+  "keywords": ["foxlight", "component-registry", "dependency-graph", "frontend", "health-scoring"]
 }

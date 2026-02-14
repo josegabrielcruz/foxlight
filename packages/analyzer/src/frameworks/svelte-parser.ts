@@ -13,9 +13,8 @@ import type {
   ComponentInfo,
   Framework,
   PropInfo,
-  ImportEdge,
-  ImportSpecifier,
 } from '@foxlight/core';
+import { extractImportsFromScript } from '@foxlight/core';
 
 /** Extracted information from a .svelte file. */
 export interface SvelteFileAnalysis {
@@ -133,55 +132,6 @@ function extractTemplateContent(source: string): string {
     .replace(/<script[\s\S]*?<\/script>/gi, '')
     .replace(/<style[\s\S]*?<\/style>/gi, '')
     .trim();
-}
-
-function extractImportsFromScript(script: string, filePath: string): ImportEdge[] {
-  const imports: ImportEdge[] = [];
-  const importRegex =
-    /import\s+(?:(?:type\s+)?(?:(\{[^}]+\})|(\w+)(?:\s*,\s*(\{[^}]+\}))?|(\*\s+as\s+\w+)))\s+from\s+['"]([^'"]+)['"]/g;
-
-  let match;
-  while ((match = importRegex.exec(script)) !== null) {
-    const target = match[5]!;
-    const specifiers: ImportSpecifier[] = [];
-
-    // Default import
-    if (match[2]) {
-      specifiers.push({ imported: 'default', local: match[2] });
-    }
-
-    // Named imports { a, b }
-    const namedBlock = match[1] ?? match[3];
-    if (namedBlock) {
-      const names = namedBlock
-        .replace(/[{}]/g, '')
-        .split(',')
-        .map((s) => s.trim())
-        .filter(Boolean);
-      for (const name of names) {
-        const parts = name.split(/\s+as\s+/);
-        specifiers.push({
-          imported: parts[0]!.replace(/^type\s+/, '').trim(),
-          local: (parts[1] ?? parts[0]!).trim(),
-        });
-      }
-    }
-
-    // Namespace import
-    if (match[4]) {
-      const nsName = match[4].replace('* as ', '').trim();
-      specifiers.push({ imported: '*', local: nsName });
-    }
-
-    imports.push({
-      source: filePath,
-      target,
-      specifiers,
-      typeOnly: /import\s+type\s/.test(match[0]!),
-    });
-  }
-
-  return imports;
 }
 
 /**

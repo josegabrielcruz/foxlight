@@ -44,3 +44,5 @@ export type { TrafficProfile } from './cost-estimator.js';
 
 export { analyzeUpgrade, analyzeUpgrades } from './upgrade-analyzer.js';
 export type { UpgradeAnalysisOptions } from './upgrade-analyzer.js';
+
+export { extractImportsFromScript } from './import-parser.js';

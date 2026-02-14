@@ -19,12 +19,24 @@
     "dev": "tsup --watch"
   },
   "dependencies": {
-    "@foxlight/core": "*",
-    "@foxlight/analyzer": "*",
-    "@foxlight/bundle": "*"
+    "@foxlight/core": "workspace:*",
+    "@foxlight/analyzer": "workspace:*",
+    "@foxlight/bundle": "workspace:*",
+    "@foxlight/ci": "workspace:*"
   },
   "files": [
     "dist"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "author": "Jose Cruz",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/josegabrielcruz/foxlight.git",
+    "directory": "packages/cli"
+  },
+  "homepage": "https://github.com/josegabrielcruz/foxlight/tree/master/packages/cli#readme",
+  "bugs": {
+    "url": "https://github.com/josegabrielcruz/foxlight/issues"
+  },
+  "keywords": ["foxlight", "cli", "component-health", "frontend-tools"]
 }

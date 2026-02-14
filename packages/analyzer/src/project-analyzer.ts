@@ -6,7 +6,7 @@
 // the component registry and dependency graph.
 // ============================================================
 
-import { readdir } from 'node:fs/promises';
+import { readdir, readFile } from 'node:fs/promises';
 import { resolve, relative } from 'node:path';
 import ts from 'typescript';
 import {
@@ -67,9 +67,7 @@ export async function analyzeProject(
     try {
       // Vue SFC files — use dedicated parser
       if (filePath.endsWith('.vue')) {
-        const source = await import('node:fs/promises').then((fs) =>
-          fs.readFile(filePath, 'utf-8'),
-        );
+        const source = await readFile(filePath, 'utf-8');
         const vueAnalysis = parseVueSFC(source, filePath);
         const component = vueSFCToComponentInfo(vueAnalysis, filePath);
 
@@ -92,9 +90,7 @@ export async function analyzeProject(
 
       // Svelte files — use dedicated parser
       if (filePath.endsWith('.svelte')) {
-        const source = await import('node:fs/promises').then((fs) =>
-          fs.readFile(filePath, 'utf-8'),
-        );
+        const source = await readFile(filePath, 'utf-8');
         const svelteAnalysis = parseSvelteFile(source, filePath);
         const component = svelteFileToComponentInfo(svelteAnalysis, filePath);
 
