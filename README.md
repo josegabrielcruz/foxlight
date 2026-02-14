@@ -68,6 +68,20 @@ If your team already uses tools like **Bundlemon**, **size-limit**, **bundlesize
 
 Teams that currently track bundle sizes manually or through fragmented tools typically get full visibility within a single sprint.
 
+## Framework Support
+
+Foxlight works out of the box with **React**, **Vue**, **Svelte**, **Angular**, and **Web Components** (Lit). The framework is auto-detected from your `package.json`.
+
+### Next.js
+
+Next.js projects are fully supported — Foxlight auto-detects React, scans `app/`, `pages/`, and `src/` directories, and excludes `.next/` build output by default. Standard React components are discovered automatically.
+
+> **Planned enhancement:** Next.js App Router conventions use file-based routing with lowercase exports like `page.tsx`, `layout.tsx`, and `loading.tsx`. These files aren't always detected as components by the current PascalCase heuristic. A future release will add Next.js–aware detection to recognize route-level files as components regardless of naming convention.
+
+### Nuxt
+
+Nuxt projects work through Foxlight's Vue support. `.vue` single-file components are parsed and analyzed. The `.nuxt/` build directory is excluded by default.
+
 ---
 
 ## Getting Started
