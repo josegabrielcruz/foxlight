@@ -6,18 +6,53 @@
 
 **Open-source front-end intelligence platform.**
 
-Component health tracking, dependency upgrade previews, and infrastructure cost analysis — all free, self-hostable, and designed to work together.
+Foxlight gives front-end teams visibility into the things that are easy to lose track of as a codebase grows: which components are healthy, which dependencies are risky to upgrade, and how much your bundle actually costs to serve.
 
-## Features
+It plugs into your existing build tools and CI pipelines — no vendor lock-in, no dashboards to pay for.
 
-- 🔍 **Static Analysis** — AST-based component detection for React, Vue, Svelte, and more
-- 📦 **Bundle Tracking** — per-component size analysis via Vite and Webpack plugins
-- 🏥 **Health Scoring** — 6-metric weighted dashboard (bundle size, test coverage, accessibility, freshness, performance, reliability)
-- 💰 **Cost Estimation** — hosting cost projections for Vercel, Netlify, AWS, and Cloudflare
-- ⬆️ **Upgrade Previews** — impact analysis before upgrading dependencies
-- 🤖 **CI Integration** — GitHub PR comments, Check Runs, and GitLab MR notes
+## The Problem
 
-## Quick Start
+As front-end projects scale, a few questions get harder to answer:
+
+- **"Is this component still healthy?"** — It might have ballooned in size, lost test coverage, or fallen behind on accessibility. Without a single place to check, these things slip through the cracks.
+- **"Is it safe to upgrade this dependency?"** — A major version bump could affect dozens of components. Most teams find out the hard way.
+- **"How much is our bundle actually costing us?"** — Larger bundles mean more bandwidth, more CDN spend, and slower pages. But connecting bundle size to real dollar amounts usually takes guesswork.
+- **"What changed in this PR?"** — Code review catches logic bugs, but not the ripple effects on bundle size, component health, or dependency risk.
+
+Foxlight answers all of these automatically.
+
+## What It Does
+
+### 🔍 Component Discovery
+Foxlight scans your codebase and builds a registry of every component — React, Vue, or Svelte. It maps out how components relate to each other: what imports what, which components are reused, and where your dependency tree gets deep.
+
+### 🏥 Health Scoring
+Each component gets a health score from 0–100, based on six weighted metrics: **bundle size**, **test coverage**, **accessibility**, **freshness** (how recently it was updated), **performance**, and **reliability**. This gives your team a single number to track over time and a quick way to spot components that need attention.
+
+### 💰 Cost Estimation
+Foxlight takes your bundle size data and estimates what it costs to serve — per month, per hosting provider. It supports Vercel, Netlify, AWS, and Cloudflare pricing models out of the box. When a PR increases your bundle, you'll see the projected cost impact before it ships.
+
+### ⬆️ Upgrade Previews
+Before upgrading a dependency, Foxlight tells you what's at stake: which components depend on it, whether the version jump includes breaking changes, and how many files would be affected. Think of it as a pre-flight check for `npm update`.
+
+### 📦 Bundle Tracking
+Vite and Webpack plugins track per-component bundle sizes at build time. Instead of just knowing your total bundle got bigger, you can see exactly which component caused it.
+
+### 🤖 CI Integration
+Drop Foxlight into your GitHub Actions or GitLab CI pipeline and it will automatically comment on PRs with a summary of what changed — new components, removed components, bundle size diffs, and health score changes. It also creates GitHub Check Runs with pass/fail results.
+
+## Who It's For
+
+- **Front-end teams** that want to keep their component library healthy as it grows
+- **Tech leads and architects** who need visibility into dependency risk and bundle bloat
+- **Platform/infra engineers** who want to connect front-end decisions to hosting costs
+- **Open-source maintainers** who want to catch regressions before they ship
+
+Foxlight is framework-agnostic (React, Vue, Svelte), works with popular bundlers (Vite, Webpack), and runs entirely in your own infrastructure — no data leaves your CI.
+
+---
+
+## Getting Started
 
 ```bash
 # Install and build
