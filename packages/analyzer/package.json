@@ -16,7 +16,7 @@
     "dev": "tsup --watch"
   },
   "dependencies": {
-    "@foxlight/core": "workspace:*"
+    "@foxlight/core": "*"
   },
   "peerDependencies": {
     "typescript": "^5.4.0"

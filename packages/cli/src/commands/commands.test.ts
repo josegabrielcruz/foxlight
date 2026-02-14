@@ -12,7 +12,7 @@ vi.mock('@foxlight/bundle', () => ({
 
 // Mock @foxlight/core partially — keep real classes, mock health scorer
 vi.mock('@foxlight/core', async () => {
-  const actual = await vi.importActual<typeof import('@foxlight/core')>('@foxlight/core');
+  const actual = await vi.importActual('@foxlight/core');
   const metric = (score: number) => ({ score, value: '', label: 'OK', level: 'good' as const });
   return {
     ...actual,

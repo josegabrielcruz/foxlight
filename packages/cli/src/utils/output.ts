@@ -66,9 +66,7 @@ export const ui = {
 
   /** Print a table header. */
   tableHeader(columns: string[], widths: number[]): void {
-    const formatted = columns.map((col, i) =>
-      color(col.padEnd(widths[i] ?? 20), 'dim', 'bold'),
-    );
+    const formatted = columns.map((col, i) => color(col.padEnd(widths[i] ?? 20), 'dim', 'bold'));
     console.log(`  ${formatted.join('  ')}`);
   },
 

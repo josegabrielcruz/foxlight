@@ -13,13 +13,7 @@
 export type ComponentId = string;
 
 /** The front-end framework a component belongs to. */
-export type Framework =
-  | 'react'
-  | 'vue'
-  | 'svelte'
-  | 'angular'
-  | 'web-component'
-  | 'unknown';
+export type Framework = 'react' | 'vue' | 'svelte' | 'angular' | 'web-component' | 'unknown';
 
 /** How a component is exported from its module. */
 export type ExportKind = 'named' | 'default' | 're-export';

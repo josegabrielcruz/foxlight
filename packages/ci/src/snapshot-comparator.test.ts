@@ -1,7 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { join } from 'node:path';
-import { mkdtemp, writeFile, rm, mkdir } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
+import { describe, it, expect } from 'vitest';
 import { hasSignificantChanges } from './snapshot-comparator.js';
 import type { SnapshotDiff, ComponentInfo } from '@foxlight/core';
 

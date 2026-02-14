@@ -99,9 +99,7 @@ export async function detectFramework(rootDir: string): Promise<Framework> {
 // Internal helpers
 // -----------------------------------------------------------
 
-async function loadConfigFile(
-  configPath: string,
-): Promise<Partial<FoxlightConfig>> {
+async function loadConfigFile(configPath: string): Promise<Partial<FoxlightConfig>> {
   if (configPath.endsWith('.json')) {
     const raw = await readFile(configPath, 'utf-8');
     return JSON.parse(raw) as Partial<FoxlightConfig>;
@@ -120,10 +118,7 @@ async function loadConfigFile(
   }
 }
 
-function mergeWithDefaults(
-  rootDir: string,
-  partial: Partial<FoxlightConfig>,
-): FoxlightConfig {
+function mergeWithDefaults(rootDir: string, partial: Partial<FoxlightConfig>): FoxlightConfig {
   return {
     rootDir,
     include: partial.include ?? DEFAULT_INCLUDE,

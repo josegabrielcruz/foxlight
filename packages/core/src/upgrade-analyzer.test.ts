@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import type { ComponentInfo, UpgradePreview } from './types.js';
+import type { ComponentInfo } from './types.js';
 
 // -----------------------------------------------------------
 // Mock child_process and fs BEFORE importing the module

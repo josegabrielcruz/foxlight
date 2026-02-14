@@ -73,9 +73,7 @@ export function computeComponentBundleInfo(
         }
       }
     }
-    const exclusiveModules = Array.from(allDeps).filter(
-      (d) => !otherDeps.has(d),
-    );
+    const exclusiveModules = Array.from(allDeps).filter((d) => !otherDeps.has(d));
     const exclusiveSize = aggregateSize(exclusiveModules, allModules);
 
     // Determine chunks
@@ -104,10 +102,7 @@ export function computeComponentBundleInfo(
 /**
  * Aggregate sizes across multiple modules.
  */
-function aggregateSize(
-  moduleIds: string[],
-  allModules: Map<string, ModuleEntry>,
-): SizeInfo {
+function aggregateSize(moduleIds: string[], allModules: Map<string, ModuleEntry>): SizeInfo {
   let totalRaw = 0;
   let totalGzip = 0;
 
@@ -141,9 +136,6 @@ export function formatBytes(bytes: number): string {
 export function formatDelta(before: SizeInfo, after: SizeInfo): string {
   const delta = after.gzip - before.gzip;
   const sign = delta > 0 ? '+' : '';
-  const percent =
-    before.gzip > 0
-      ? ` (${sign}${((delta / before.gzip) * 100).toFixed(1)}%)`
-      : '';
+  const percent = before.gzip > 0 ? ` (${sign}${((delta / before.gzip) * 100).toFixed(1)}%)` : '';
   return `${sign}${formatBytes(delta)}${percent}`;
 }

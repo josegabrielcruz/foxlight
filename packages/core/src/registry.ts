@@ -250,9 +250,7 @@ export class ComponentRegistry {
     }
 
     const bundleDiff: BundleDiffEntry[] = [];
-    const headBundleMap = new Map(
-      head.bundleInfo.map((b) => [b.componentId, b]),
-    );
+    const headBundleMap = new Map(head.bundleInfo.map((b) => [b.componentId, b]));
     for (const baseBi of base.bundleInfo) {
       const headBi = headBundleMap.get(baseBi.componentId);
       if (!headBi) continue;
@@ -306,30 +304,20 @@ export class ComponentRegistry {
 // Internal helpers
 // -----------------------------------------------------------
 
-function diffComponent(
-  base: ComponentInfo,
-  head: ComponentInfo,
-): ComponentModification | null {
+function diffComponent(base: ComponentInfo, head: ComponentInfo): ComponentModification | null {
   const changes: string[] = [];
   const baseProps = new Set(base.props.map((p) => p.name));
   const headProps = new Set(head.props.map((p) => p.name));
 
-  const propsAdded = head.props
-    .filter((p) => !baseProps.has(p.name))
-    .map((p) => p.name);
-  const propsRemoved = base.props
-    .filter((p) => !headProps.has(p.name))
-    .map((p) => p.name);
+  const propsAdded = head.props.filter((p) => !baseProps.has(p.name)).map((p) => p.name);
+  const propsRemoved = base.props.filter((p) => !headProps.has(p.name)).map((p) => p.name);
   const propsModified: string[] = [];
 
   for (const headProp of head.props) {
     if (!baseProps.has(headProp.name)) continue;
     const baseProp = base.props.find((p) => p.name === headProp.name);
     if (!baseProp) continue;
-    if (
-      baseProp.type !== headProp.type ||
-      baseProp.required !== headProp.required
-    ) {
+    if (baseProp.type !== headProp.type || baseProp.required !== headProp.required) {
       propsModified.push(headProp.name);
     }
   }

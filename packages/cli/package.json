@@ -19,10 +19,10 @@
     "dev": "tsup --watch"
   },
   "dependencies": {
-    "@foxlight/core": "workspace:*",
-    "@foxlight/analyzer": "workspace:*",
-    "@foxlight/bundle": "workspace:*",
-    "@foxlight/ci": "workspace:*"
+    "@foxlight/core": "*",
+    "@foxlight/analyzer": "*",
+    "@foxlight/bundle": "*",
+    "@foxlight/ci": "*"
   },
   "files": [
     "dist"

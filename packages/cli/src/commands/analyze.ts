@@ -6,7 +6,6 @@
 // ============================================================
 
 import { analyzeProject } from '@foxlight/analyzer';
-import { formatBytes } from '@foxlight/bundle';
 import { ui } from '../utils/output.js';
 
 export interface AnalyzeOptions {
@@ -44,12 +43,7 @@ export async function runAnalyze(options: AnalyzeOptions): Promise<void> {
 
     for (const comp of components) {
       ui.row(
-        [
-          comp.name,
-          comp.framework,
-          String(comp.props.length),
-          String(comp.children.length),
-        ],
+        [comp.name, comp.framework, String(comp.props.length), String(comp.children.length)],
         widths,
       );
     }

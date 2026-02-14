@@ -7,9 +7,7 @@ describe('DependencyGraph', () => {
     graph.addEdge('A', 'B');
     graph.addEdge('A', 'C');
 
-    expect(graph.getDependencies('A')).toEqual(
-      expect.arrayContaining(['B', 'C']),
-    );
+    expect(graph.getDependencies('A')).toEqual(expect.arrayContaining(['B', 'C']));
     expect(graph.getDependents('B')).toEqual(['A']);
   });
 
@@ -32,9 +30,7 @@ describe('DependencyGraph', () => {
 
     // If Button changes, both Layout, Page, and OtherPage are impacted
     const impacted = graph.getImpactedModules('Button');
-    expect(impacted).toEqual(
-      expect.arrayContaining(['Layout', 'Page', 'OtherPage']),
-    );
+    expect(impacted).toEqual(expect.arrayContaining(['Layout', 'Page', 'OtherPage']));
   });
 
   it('should detect cycles', () => {
@@ -91,10 +87,7 @@ describe('DependencyGraph', () => {
     graph.addEdge('Page2', 'Layout');
     graph.addEdge('Layout', 'Button');
 
-    const exclusive = graph.getExclusiveDependencies('Page1', [
-      'Page1',
-      'Page2',
-    ]);
+    const exclusive = graph.getExclusiveDependencies('Page1', ['Page1', 'Page2']);
     expect(exclusive).toContain('Sidebar');
     expect(exclusive).not.toContain('Layout');
     expect(exclusive).not.toContain('Button');

@@ -22,18 +22,14 @@ describe('AST Scanner', () => {
     const source = `import React from "react";`;
     const result = analyzeSource(source, '/test/App.tsx');
 
-    expect(result.imports[0]!.specifiers).toEqual([
-      { imported: 'default', local: 'React' },
-    ]);
+    expect(result.imports[0]!.specifiers).toEqual([{ imported: 'default', local: 'React' }]);
   });
 
   it('should extract namespace imports', () => {
     const source = `import * as Icons from "./icons";`;
     const result = analyzeSource(source, '/test/App.tsx');
 
-    expect(result.imports[0]!.specifiers).toEqual([
-      { imported: '*', local: 'Icons' },
-    ]);
+    expect(result.imports[0]!.specifiers).toEqual([{ imported: '*', local: 'Icons' }]);
   });
 
   it('should detect type-only imports', () => {
@@ -77,9 +73,7 @@ describe('AST Scanner', () => {
     const result = analyzeSource(source, '/test/App.tsx');
 
     const button = result.jsxElements.find((e) => e.tagName === 'Button');
-    expect(button?.props).toEqual(
-      expect.arrayContaining(['label', 'variant', 'disabled']),
-    );
+    expect(button?.props).toEqual(expect.arrayContaining(['label', 'variant', 'disabled']));
   });
 
   it('should detect function declarations that return JSX', () => {
@@ -100,9 +94,7 @@ describe('AST Scanner', () => {
     expect(button?.returnsJsx).toBe(true);
     expect(button?.isExported).toBe(true);
 
-    const helper = result.functionDeclarations.find(
-      (f) => f.name === 'helperFn',
-    );
+    const helper = result.functionDeclarations.find((f) => f.name === 'helperFn');
     expect(helper?.returnsJsx).toBe(false);
     expect(helper?.isExported).toBe(false);
   });

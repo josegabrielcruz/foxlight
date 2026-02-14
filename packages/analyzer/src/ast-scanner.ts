@@ -107,17 +107,11 @@ export function analyzeSource(source: string, filePath: string): FileAnalysis {
         if (
           ts.isIdentifier(decl.name) &&
           decl.initializer &&
-          (ts.isArrowFunction(decl.initializer) ||
-            ts.isFunctionExpression(decl.initializer))
+          (ts.isArrowFunction(decl.initializer) || ts.isFunctionExpression(decl.initializer))
         ) {
           const isExported = hasExportModifier(node);
           functionDeclarations.push(
-            extractArrowFunction(
-              decl.name,
-              decl.initializer,
-              isExported,
-              sourceFile,
-            ),
+            extractArrowFunction(decl.name, decl.initializer, isExported, sourceFile),
           );
         }
       }
@@ -138,11 +132,7 @@ export function analyzeSource(source: string, filePath: string): FileAnalysis {
     }
 
     // Exported function declarations
-    if (
-      ts.isFunctionDeclaration(node) &&
-      node.name &&
-      hasExportModifier(node)
-    ) {
+    if (ts.isFunctionDeclaration(node) && node.name && hasExportModifier(node)) {
       const isDefault = hasDefaultModifier(node);
       exports.push({
         name: node.name.text,
@@ -159,11 +149,7 @@ export function analyzeSource(source: string, filePath: string): FileAnalysis {
     }
 
     // Default export assignment: export default Component
-    if (
-      ts.isExportAssignment(node) &&
-      !node.isExportEquals &&
-      ts.isIdentifier(node.expression)
-    ) {
+    if (ts.isExportAssignment(node) && !node.isExportEquals && ts.isIdentifier(node.expression)) {
       exports.push({
         name: node.expression.text,
         kind: 'variable',
@@ -255,10 +241,7 @@ function extractExportDeclaration(
   return results.length > 0 ? results : null;
 }
 
-function extractFunction(
-  node: ts.FunctionDeclaration,
-  sourceFile: ts.SourceFile,
-): FunctionInfo {
+function extractFunction(node: ts.FunctionDeclaration, sourceFile: ts.SourceFile): FunctionInfo {
   return {
     name: node.name?.text ?? '<anonymous>',
     line: getLine(node, sourceFile),
@@ -325,11 +308,7 @@ function extractParameters(
 function containsJsx(node: ts.Node): boolean {
   let found = false;
   function walk(n: ts.Node): void {
-    if (
-      ts.isJsxElement(n) ||
-      ts.isJsxSelfClosingElement(n) ||
-      ts.isJsxFragment(n)
-    ) {
+    if (ts.isJsxElement(n) || ts.isJsxSelfClosingElement(n) || ts.isJsxFragment(n)) {
       found = true;
       return;
     }
@@ -342,21 +321,15 @@ function containsJsx(node: ts.Node): boolean {
 function hasExportModifier(node: ts.Node): boolean {
   if (!ts.canHaveModifiers(node)) return false;
   const modifiers = ts.getModifiers(node);
-  return (
-    modifiers?.some((m) => m.kind === ts.SyntaxKind.ExportKeyword) ?? false
-  );
+  return modifiers?.some((m) => m.kind === ts.SyntaxKind.ExportKeyword) ?? false;
 }
 
 function hasDefaultModifier(node: ts.Node): boolean {
   if (!ts.canHaveModifiers(node)) return false;
   const modifiers = ts.getModifiers(node);
-  return (
-    modifiers?.some((m) => m.kind === ts.SyntaxKind.DefaultKeyword) ?? false
-  );
+  return modifiers?.some((m) => m.kind === ts.SyntaxKind.DefaultKeyword) ?? false;
 }
 
 function getLine(node: ts.Node, sourceFile: ts.SourceFile): number {
-  return (
-    sourceFile.getLineAndCharacterOfPosition(node.getStart(sourceFile)).line + 1
-  );
+  return sourceFile.getLineAndCharacterOfPosition(node.getStart(sourceFile)).line + 1;
 }

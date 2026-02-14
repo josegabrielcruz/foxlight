@@ -6,22 +6,14 @@
 // plain utility functions. Framework-aware.
 // ============================================================
 
-import type {
-  ComponentInfo,
-  Framework,
-  ExportKind,
-  PropInfo,
-} from '@foxlight/core';
+import type { ComponentInfo, Framework, ExportKind, PropInfo } from '@foxlight/core';
 import type { FileAnalysis, FunctionInfo } from './ast-scanner.js';
 
 /**
  * Detect components from a file analysis result.
  * Uses heuristics appropriate for the given framework.
  */
-export function detectComponents(
-  analysis: FileAnalysis,
-  framework: Framework,
-): ComponentInfo[] {
+export function detectComponents(analysis: FileAnalysis, framework: Framework): ComponentInfo[] {
   const components: ComponentInfo[] = [];
 
   for (const fn of analysis.functionDeclarations) {
@@ -87,9 +79,7 @@ function toComponentInfo(
   const props = extractProps(fn);
 
   // Find child components (JSX elements that are PascalCase)
-  const children = analysis.jsxElements
-    .filter((el) => el.isComponent)
-    .map((el) => el.tagName);
+  const children = analysis.jsxElements.filter((el) => el.isComponent).map((el) => el.tagName);
 
   // Find npm package dependencies
   const dependencies = analysis.imports
@@ -132,8 +122,7 @@ function extractProps(fn: FunctionInfo): PropInfo[] {
       name: firstParam.name,
       type: firstParam.type,
       required: true,
-      description:
-        'Auto-detected parameter — full prop extraction requires type analysis',
+      description: 'Auto-detected parameter — full prop extraction requires type analysis',
     },
   ];
 }
@@ -142,9 +131,7 @@ function extractProps(fn: FunctionInfo): PropInfo[] {
  * After all files are analyzed, cross-reference to populate `usedBy` fields.
  * This connects the "children" references (forward) to "usedBy" references (backward).
  */
-export function crossReferenceComponents(
-  components: ComponentInfo[],
-): ComponentInfo[] {
+export function crossReferenceComponents(components: ComponentInfo[]): ComponentInfo[] {
   const byName = new Map<string, ComponentInfo>();
   for (const comp of components) {
     byName.set(comp.name, comp);
@@ -162,9 +149,7 @@ export function crossReferenceComponents(
 
   // Resolve children from names to IDs
   for (const comp of components) {
-    comp.children = comp.children
-      .map((name) => byName.get(name)?.id ?? name)
-      .filter(Boolean);
+    comp.children = comp.children.map((name) => byName.get(name)?.id ?? name).filter(Boolean);
   }
 
   return components;

@@ -15,6 +15,7 @@ import {
   postMRComment,
   detectGitLabEnv,
 } from '@foxlight/ci';
+import type { GitHubConfig, GitLabConfig } from '@foxlight/ci';
 import { ui } from '../utils/output.js';
 
 export interface CIOptions {
@@ -77,7 +78,7 @@ export async function runCI(options: CIOptions): Promise<void> {
   if (githubEnv.token && githubEnv.owner && githubEnv.repo && githubEnv.prNumber) {
     ui.progress('Posting GitHub PR comment');
     try {
-      const config = githubEnv as import('@foxlight/ci').GitHubConfig;
+      const config = githubEnv as GitHubConfig;
       await postPRComment(config, diff);
       ui.progressDone('PR comment posted');
 
@@ -97,7 +98,7 @@ export async function runCI(options: CIOptions): Promise<void> {
   if (hasGitLab) {
     ui.progress('Posting GitLab MR note');
     try {
-      await postMRComment(gitlabEnv as import('@foxlight/ci').GitLabConfig, diff);
+      await postMRComment(gitlabEnv as GitLabConfig, diff);
       ui.progressDone('MR note posted');
     } catch (err) {
       ui.warn(`GitLab integration failed: ${err instanceof Error ? err.message : String(err)}`);
