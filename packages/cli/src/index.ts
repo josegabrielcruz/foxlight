@@ -17,6 +17,9 @@ import { runInit } from './commands/init.js';
 import { runCost } from './commands/cost.js';
 import { runUpgrade } from './commands/upgrade.js';
 import { runCI } from './commands/ci.js';
+import { runCoverage } from './commands/coverage.js';
+import { runDeadCodeDetection } from './commands/dead-code.js';
+import { runAPICheck } from './commands/api-check.js';
 import { ui } from './utils/output.js';
 
 async function main(): Promise<void> {
@@ -94,6 +97,32 @@ async function main(): Promise<void> {
       });
       break;
 
+    case 'coverage':
+      await runCoverage({
+        root: rootDir,
+        json,
+        threshold: flags.has('threshold') ? parseInt(flags.get('threshold')!, 10) : undefined,
+        coveragePath: flags.get('coverage'),
+      });
+      break;
+
+    case 'dead-code':
+      await runDeadCodeDetection({
+        root: rootDir,
+        json,
+        threshold: flags.has('threshold') ? parseInt(flags.get('threshold')!, 10) : undefined,
+      });
+      break;
+
+    case 'api-check':
+      await runAPICheck({
+        root: rootDir,
+        json,
+        save: flags.has('save'),
+        baseline: flags.get('baseline'),
+      });
+      break;
+
     case 'help':
     case '--help':
     case '-h':
@@ -124,6 +153,9 @@ function printHelp(): void {
   console.log('    health            Show component health dashboard');
   console.log('    cost              Estimate hosting costs by provider');
   console.log('    upgrade <pkg>     Analyze dependency upgrade impact');
+  console.log('    coverage          Show test coverage by component');
+  console.log('    dead-code         Find unused components and exports');
+  console.log('    api-check         Detect breaking changes in component APIs');
   console.log('    ci                Run CI analysis and post results');
   console.log('');
   console.log('  Options:');
@@ -132,6 +164,9 @@ function printHelp(): void {
   console.log('    --component <name> Filter health to a specific component');
   console.log('    --provider <name> Cost provider (vercel, netlify, aws, cloudflare)');
   console.log('    --to <version>    Target version for upgrade command');
+  console.log('    --threshold <num> Coverage/dead-code threshold');
+  console.log('    --coverage <path> Path to coverage JSON file');
+  console.log('    --save            Save current state as baseline (api-check)');
   console.log('    --help            Show this help message');
   console.log('    --version         Show version number');
   console.log('');

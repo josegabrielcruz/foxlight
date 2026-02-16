@@ -46,3 +46,34 @@ export { analyzeUpgrade, analyzeUpgrades } from './upgrade-analyzer.js';
 export type { UpgradeAnalysisOptions } from './upgrade-analyzer.js';
 
 export { extractImportsFromScript } from './import-parser.js';
+
+export {
+  loadCoverageData,
+  mapCoverageToComponents,
+  getComponentCoverage,
+  findUncoveredComponents,
+  findLowCoverageComponents,
+  summarizeCoverage,
+} from './coverage-analyzer.js';
+export type { ComponentCoverage, CoverageReport } from './coverage-analyzer.js';
+
+export {
+  detectDeadCode,
+  findSafeRemovalCandidates,
+  formatDeadCodeReport,
+} from './dead-code-detector.js';
+export type { UnusedComponent, UnusedExport, DeadCodeReport } from './dead-code-detector.js';
+
+export {
+  createAPISnapshot,
+  snapshotToJSON,
+  snapshotFromJSON,
+  compareSnapshots,
+  formatAPIChangeSummary,
+} from './api-snapshot.js';
+export type {
+  ComponentAPI,
+  APISnapshot,
+  APIChangeSummary,
+  BreakingChange,
+} from './api-snapshot.js';
