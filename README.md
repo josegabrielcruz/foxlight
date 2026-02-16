@@ -103,15 +103,73 @@ npx foxlight health
 
 ## CLI Commands
 
-| Command                  | Description                         |
-| ------------------------ | ----------------------------------- |
-| `foxlight init`          | Initialize Foxlight in your project |
-| `foxlight analyze`       | Scan and discover components        |
-| `foxlight health`        | Component health dashboard          |
-| `foxlight cost`          | Estimate hosting costs              |
-| `foxlight upgrade <pkg>` | Dependency upgrade impact analysis  |
+| Command                  | Description                              |
+| ------------------------ | ---------------------------------------- |
+| `foxlight init`          | Initialize Foxlight in your project      |
+| `foxlight analyze`       | Scan and discover components             |
+| `foxlight health`        | Component health dashboard               |
+| `foxlight cost`          | Estimate hosting costs                   |
+| `foxlight upgrade <pkg>` | Dependency upgrade impact analysis       |
+| `foxlight coverage`      | Show test coverage by component          |
+| `foxlight dead-code`     | Find unused components and exports       |
+| `foxlight api-check`     | Detect breaking changes in component APIs |
 
 All commands support `--json` for machine-readable output and `--root <dir>` to specify the project root.
+
+### Test Coverage
+
+```bash
+# Generate coverage (works with Jest, Vitest, etc.)
+npm test -- --coverage
+
+# Show coverage by component
+npx foxlight coverage
+
+# Show only low-coverage components
+npx foxlight coverage --threshold 50
+
+# Get machine-readable output
+npx foxlight coverage --json
+```
+
+By default, Foxlight expects coverage data in `coverage/coverage-final.json` (Istanbul format). You can specify a custom path with `--coverage <path>`.
+
+### Dead Code Detection
+
+```bash
+# Find unused components and exports
+npx foxlight dead-code
+
+# Output as JSON
+npx foxlight dead-code --json
+```
+
+This command identifies:
+- **Unused components** — components that are never imported or used
+- **Orphaned components** — components only used by other unused components
+- **Unused exports** — exports that are defined but never imported
+
+Output includes estimated bundle size savings if bundle tracking is enabled.
+
+### API Breaking Changes
+
+```bash
+# Create an initial API baseline
+npx foxlight api-check --save
+
+# Check for breaking changes
+npx foxlight api-check
+
+# Update baseline after reviewing changes
+npx foxlight api-check --save
+```
+
+The `api-check` command detects:
+- **Prop removals** — required props that are removed
+- **Export removals** — exports that are removed
+- **Export kind changes** — changes from named to default exports or vice versa
+
+It maintains a baseline snapshot in `.foxlight/api-baseline.json` to track changes across commits. Use `--save` to update the baseline.
 
 ## Build Plugins
 
