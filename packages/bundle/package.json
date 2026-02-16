@@ -1,6 +1,6 @@
 {
   "name": "@foxlight/bundle",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Bundle size analysis for Foxlight — Vite and Webpack plugins for per-component size tracking.",
   "type": "module",
   "main": "./dist/index.js",

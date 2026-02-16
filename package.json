@@ -1,6 +1,6 @@
 {
   "name": "foxlight",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Open-source front-end intelligence platform — component health, dependency upgrade previews, and cost analysis.",
   "author": "Jose Cruz",
