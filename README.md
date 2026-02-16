@@ -47,6 +47,18 @@ Vite and Webpack plugins track per-component bundle sizes at build time. Instead
 
 Drop Foxlight into your GitHub Actions or GitLab CI pipeline and it will automatically comment on PRs with a summary of what changed — new components, removed components, bundle size diffs, and health score changes. It also creates GitHub Check Runs with pass/fail results.
 
+### 📋 Test Coverage Tracking
+
+Foxlight reads test coverage data from Jest, Vitest, or nyc and maps it to your components. See exactly which components have no test coverage and which ones fall below your coverage threshold. Coverage data feeds into health scoring so teams can track testing progress over time.
+
+### 🗑️ Dead Code Detection
+
+Identify unused components, orphaned code branches, and exports that are defined but never imported. Foxlight calculates potential bundle size savings for each unused component, making it easy to prioritize cleanup and safely remove dead weight from your codebase.
+
+### ⚠️ Breaking Change Detection
+
+Before merging, Foxlight detects when component APIs change in breaking ways — props are removed, exports disappear, or export kinds change. It maintains API baselines so you can catch these changes early and prevent shipping breaking changes to downstream consumers.
+
 ## Who It's For
 
 - **Front-end teams** that want to keep their component library healthy as it grows
