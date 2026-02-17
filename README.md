@@ -1,6 +1,7 @@
 # 🦊 Foxlight
 
 [![CI](https://github.com/josegabrielcruz/foxlight/actions/workflows/ci.yml/badge.svg)](https://github.com/josegabrielcruz/foxlight/actions/workflows/ci.yml)
+[![npm](https://img.shields.io/npm/v/@foxlight/cli.svg)](https://www.npmjs.com/org/foxlight)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D20-brightgreen.svg)](https://nodejs.org)
 
