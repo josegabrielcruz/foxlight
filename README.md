@@ -10,6 +10,10 @@ Foxlight gives front-end teams visibility into the things that are easy to lose 
 
 It plugs into your existing build tools and CI pipelines — no vendor lock-in, no dashboards to pay for.
 
+## Status
+
+🚧 **Early stage (v0.2.0).** Foxlight is under active development. The core features are working and tested, but the API and CLI may change before reaching 1.0. Feedback and contributions are welcome — [open an issue](https://github.com/josegabrielcruz/foxlight/issues) if you hit problems or have ideas.
+
 ## The Problem
 
 As front-end projects scale, a few questions get harder to answer:
