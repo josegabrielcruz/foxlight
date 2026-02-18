@@ -9,7 +9,8 @@
     { "path": "../core" },
     { "path": "../analyzer" },
     { "path": "../bundle" },
-    { "path": "../ci" }
+    { "path": "../ci" },
+    { "path": "../dashboard" }
   ],
   "include": ["src/**/*.ts"]
 }
