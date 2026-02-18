@@ -8,7 +8,13 @@
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { dirname } from 'node:path';
-import { ComponentRegistry, type ProjectSnapshot, type SnapshotDiff } from '@foxlight/core';
+import {
+  ComponentRegistry,
+  type ProjectSnapshot,
+  type SnapshotDiff,
+  type BundleDiffEntry,
+  type HealthDiffEntry,
+} from '@foxlight/core';
 import { analyzeProject } from '@foxlight/analyzer';
 
 export interface CompareOptions {
@@ -91,11 +97,13 @@ export function hasSignificantChanges(diff: SnapshotDiff): boolean {
   if (modified.length > 0) return true;
 
   // Check for significant bundle size changes (> 1KB gzip)
-  const hasBundleChange = diff.bundleDiff.some((b) => Math.abs(b.delta.gzip) > 1024);
+  const hasBundleChange = diff.bundleDiff.some(
+    (b: BundleDiffEntry) => Math.abs(b.delta.gzip) > 1024,
+  );
   if (hasBundleChange) return true;
 
   // Check for significant health score changes (> 10 points)
-  const hasHealthChange = diff.healthDiff.some((h) => Math.abs(h.delta) > 10);
+  const hasHealthChange = diff.healthDiff.some((h: HealthDiffEntry) => Math.abs(h.delta) > 10);
   if (hasHealthChange) return true;
 
   return false;

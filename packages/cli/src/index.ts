@@ -7,13 +7,17 @@
 //   foxlight init          — Initialize Foxlight in a project
 //   foxlight analyze       — Scan project and discover components
 //   foxlight health        — Show component health dashboard
+//   foxlight dashboard     — Launch local browser dashboard
 //   foxlight analyze --json — Output analysis as JSON
 // ============================================================
 
-import { resolve } from 'node:path';
+import { resolve, dirname, join } from 'node:path';
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { runAnalyze } from './commands/analyze.js';
 import { runHealth } from './commands/health.js';
 import { runInit } from './commands/init.js';
+import { runDashboard } from './commands/dashboard.js';
 import { runCost } from './commands/cost.js';
 import { runUpgrade } from './commands/upgrade.js';
 import { runCI } from './commands/ci.js';
@@ -22,13 +26,10 @@ import { runDeadCodeDetection } from './commands/dead-code.js';
 import { runAPICheck } from './commands/api-check.js';
 import { ui } from './utils/output.js';
 
-async function main(): Promise<void> {
-  const args = process.argv.slice(2);
-  const command = args[0];
-
-  // Parse flags
+/** Parse CLI flags from an args array (everything after the command). */
+export function parseFlags(args: string[]): Map<string, string> {
   const flags = new Map<string, string>();
-  for (let i = 1; i < args.length; i++) {
+  for (let i = 0; i < args.length; i++) {
     const arg = args[i]!;
     if (arg.startsWith('--')) {
       const key = arg.slice(2);
@@ -38,6 +39,12 @@ async function main(): Promise<void> {
       if (value !== 'true') i++;
     }
   }
+  return flags;
+}
+
+export async function main(argv: string[] = process.argv.slice(2)): Promise<void> {
+  const command = argv[0];
+  const flags = parseFlags(argv.slice(1));
 
   const rootDir = resolve(flags.get('root') ?? flags.get('dir') ?? '.');
   const json = flags.has('json');
@@ -55,11 +62,18 @@ async function main(): Promise<void> {
       break;
 
     case 'health':
-    case 'dashboard':
       await runHealth({
         rootDir,
         json,
         component: flags.get('component') ?? flags.get('c'),
+      });
+      break;
+
+    case 'dashboard':
+      await runDashboard({
+        rootDir,
+        port: flags.has('port') ? parseInt(flags.get('port')!, 10) : undefined,
+        host: flags.get('host'),
       });
       break;
 
@@ -73,7 +87,7 @@ async function main(): Promise<void> {
       break;
 
     case 'upgrade': {
-      const packageName = args[1];
+      const packageName = argv[1];
       if (!packageName || packageName.startsWith('--')) {
         ui.error('Please specify a package name: foxlight upgrade <package>');
         process.exitCode = 1;
@@ -132,9 +146,14 @@ async function main(): Promise<void> {
 
     case 'version':
     case '--version':
-    case '-v':
-      console.log('  foxlight v0.1.0');
+    case '-v': {
+      const __dirname = dirname(fileURLToPath(import.meta.url));
+      const pkg = JSON.parse(readFileSync(join(__dirname, '..', 'package.json'), 'utf-8')) as {
+        version: string;
+      };
+      console.log(`  foxlight v${pkg.version}`);
       break;
+    }
 
     default:
       ui.error(`Unknown command: ${command}`);
@@ -151,6 +170,7 @@ function printHelp(): void {
   console.log('    init              Initialize Foxlight in your project');
   console.log('    analyze           Scan project and discover components');
   console.log('    health            Show component health dashboard');
+  console.log('    dashboard         Launch local browser dashboard');
   console.log('    cost              Estimate hosting costs by provider');
   console.log('    upgrade <pkg>     Analyze dependency upgrade impact');
   console.log('    coverage          Show test coverage by component');
@@ -163,6 +183,8 @@ function printHelp(): void {
   console.log('    --json            Output results as JSON');
   console.log('    --component <name> Filter health to a specific component');
   console.log('    --provider <name> Cost provider (vercel, netlify, aws, cloudflare)');
+  console.log('    --port <num>      Dashboard port (default: 3000)');
+  console.log('    --host <addr>     Dashboard host (default: localhost)');
   console.log('    --to <version>    Target version for upgrade command');
   console.log('    --threshold <num> Coverage/dead-code threshold');
   console.log('    --coverage <path> Path to coverage JSON file');

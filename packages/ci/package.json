@@ -16,8 +16,8 @@
     "dev": "tsup --watch"
   },
   "dependencies": {
-    "@foxlight/core": "*",
-    "@foxlight/analyzer": "*"
+    "@foxlight/core": "^0.2.0",
+    "@foxlight/analyzer": "^0.2.0"
   },
   "files": [
     "dist"

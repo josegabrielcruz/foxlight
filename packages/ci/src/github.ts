@@ -10,6 +10,7 @@ import type {
   BundleDiffEntry,
   HealthDiffEntry,
   ComponentModification,
+  ComponentInfo,
 } from '@foxlight/core';
 
 /** Format bytes into a human-readable string. */
@@ -151,13 +152,13 @@ export function generateCommentBody(diff: SnapshotDiff): string {
 
     if (added.length > 0) {
       lines.push(
-        `🟢 **${added.length} added:** ${added.map((c) => `\`${c.name}\``).join(', ')}`,
+        `🟢 **${added.length} added:** ${added.map((c: ComponentInfo) => `\`${c.name}\``).join(', ')}`,
         '',
       );
     }
     if (removed.length > 0) {
       lines.push(
-        `🔴 **${removed.length} removed:** ${removed.map((c) => `\`${c.name}\``).join(', ')}`,
+        `🔴 **${removed.length} removed:** ${removed.map((c: ComponentInfo) => `\`${c.name}\``).join(', ')}`,
         '',
       );
     }
@@ -171,7 +172,9 @@ export function generateCommentBody(diff: SnapshotDiff): string {
 
   // Bundle size changes
   if (diff.bundleDiff.length > 0) {
-    const significant = diff.bundleDiff.filter((b) => Math.abs(b.delta.gzip) > 100);
+    const significant = diff.bundleDiff.filter(
+      (b: BundleDiffEntry) => Math.abs(b.delta.gzip) > 100,
+    );
     if (significant.length > 0) {
       lines.push('### Bundle Size Changes', '');
       lines.push(
@@ -187,7 +190,7 @@ export function generateCommentBody(diff: SnapshotDiff): string {
 
   // Health score changes
   if (diff.healthDiff.length > 0) {
-    const significant = diff.healthDiff.filter((h) => Math.abs(h.delta) >= 5);
+    const significant = diff.healthDiff.filter((h: HealthDiffEntry) => Math.abs(h.delta) >= 5);
     if (significant.length > 0) {
       lines.push('### Health Score Changes', '');
       lines.push(

@@ -5,7 +5,7 @@ Static analysis engine for [Foxlight](https://github.com/josegabrielcruz/foxligh
 ## What's Inside
 
 - **AST Scanner** — TypeScript compiler API-based extraction of imports, exports, JSX usage, and function declarations
-- **Component Detector** — heuristic detection of React/Vue/Svelte/Angular components with cross-referencing
+- **Component Detector** — heuristic detection of React/Vue/Svelte components with cross-referencing
 - **Prop Extractor** — TypeScript type-checker based prop extraction with defaults and JSDoc descriptions
 - **Vue SFC Parser** — parses `.vue` Single File Components (`<script setup>`, `defineProps`, template scanning)
 - **Svelte Parser** — parses `.svelte` files (`export let` props, module scripts, template child detection)

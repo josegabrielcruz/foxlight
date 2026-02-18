@@ -2,6 +2,7 @@
   "name": "foxlight",
   "version": "0.2.0",
   "private": true,
+  "type": "module",
   "description": "Open-source front-end intelligence platform — component health, dependency upgrade previews, and cost analysis.",
   "author": "Jose Cruz",
   "license": "MIT",
@@ -17,7 +18,7 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "npm run build -w packages/core && npm run build -w packages/analyzer && npm run build -w packages/bundle && npm run build -w packages/cli && npm run build -w packages/ci",
+    "build": "npm run build -w packages/core && npm run build -w packages/analyzer && npm run build -w packages/bundle && npm run build -w packages/cli && npm run build -w packages/ci && npm run build -w packages/dashboard",
     "dev": "npm run dev --workspaces --if-present",
     "test": "vitest run",
     "test:watch": "vitest",

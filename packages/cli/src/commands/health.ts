@@ -7,7 +7,12 @@
 // ============================================================
 
 import { analyzeProject } from '@foxlight/analyzer';
-import { computeComponentHealth, type HealthInput, type ComponentHealth } from '@foxlight/core';
+import {
+  computeComponentHealth,
+  type HealthInput,
+  type ComponentHealth,
+  type ComponentInfo,
+} from '@foxlight/core';
 import { ui } from '../utils/output.js';
 
 export interface HealthOptions {
@@ -31,7 +36,7 @@ export async function runHealth(options: HealthOptions): Promise<void> {
   }
 
   // Compute health scores using the full health scorer
-  const healthResults: ComponentHealth[] = components.map((comp) => {
+  const healthResults: ComponentHealth[] = components.map((comp: ComponentInfo) => {
     const bundleInfo = result.registry.getBundleInfo(comp.id);
 
     const input: HealthInput = {

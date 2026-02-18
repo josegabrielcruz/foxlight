@@ -79,7 +79,7 @@ If your team already uses tools like **Bundlemon**, **size-limit**, **bundlesize
 
 1. **No rip-and-replace required.** You can run Foxlight alongside your existing tools. Start with `foxlight analyze` to see what it finds — there's nothing to uninstall first.
 2. **Works with your current setup.** Foxlight reads your existing source files and plugs into the bundlers you're already using (Vite, Webpack). There's no special file format or project restructuring needed.
-3. **One config file.** Drop a `.foxlight.json` in your project root to tell it where your components live. Most teams need fewer than five lines of config.
+3. **One config file.** Run `foxlight init` to generate a `foxlight.config.ts` in your project root. Most teams need fewer than five lines of config. JSON (`foxlight.config.json`) and plain JS (`.js`, `.mjs`) are also supported.
 4. **Gradual rollout.** Start with component discovery and health scores locally. When you're ready, add the build plugin for bundle tracking. CI integration can come last — each piece is independent.
 5. **Nothing to host.** Foxlight runs in your terminal and your CI pipeline. There's no dashboard server to deploy, no accounts to create, and no data sent to third parties.
 
@@ -87,7 +87,9 @@ Teams that currently track bundle sizes manually or through fragmented tools typ
 
 ## Framework Support
 
-Foxlight works out of the box with **React**, **Vue**, **Svelte**, **Angular**, and **Web Components** (Lit). The framework is auto-detected from your `package.json`.
+Foxlight works out of the box with **React**, **Vue**, and **Svelte**. The framework is auto-detected from your `package.json`.
+
+> **Planned:** Angular and Web Component (Lit) parsers are on the roadmap. The config and types already include `angular` and `web-component` as framework values, but dedicated file parsers are not yet implemented. Contributions welcome!
 
 ### Next.js
 
@@ -146,6 +148,7 @@ npm run format
 | `foxlight init`          | Initialize Foxlight in your project       |
 | `foxlight analyze`       | Scan and discover components              |
 | `foxlight health`        | Component health dashboard                |
+| `foxlight dashboard`     | Launch local browser dashboard            |
 | `foxlight cost`          | Estimate hosting costs                    |
 | `foxlight upgrade <pkg>` | Dependency upgrade impact analysis        |
 | `foxlight coverage`      | Show test coverage by component           |
@@ -153,6 +156,30 @@ npm run format
 | `foxlight api-check`     | Detect breaking changes in component APIs |
 
 All commands support `--json` for machine-readable output and `--root <dir>` to specify the project root.
+
+### Local Dashboard
+
+For visual exploration of your components and historical trends, use the optional local dashboard:
+
+```bash
+npx foxlight analyze    # Capture analysis results
+npx foxlight dashboard  # Open http://localhost:3000
+```
+
+The dashboard displays:
+
+- **Health trends** — component health scores over time (last 30 snapshots)
+- **Component grid** — interactive cards with health scores and metrics
+- **Bundle explorer** — bar chart of bundle sizes by component
+
+All data is stored locally in `.foxlight/snapshots/` — no external services or accounts required.
+
+Dashboard options:
+
+```bash
+npx foxlight dashboard --port 3001    # Use custom port
+npx foxlight dashboard --host 0.0.0.0 # Bind to all interfaces (not recommended for shared networks)
+```
 
 ### Test Coverage
 
@@ -237,7 +264,22 @@ export default {
 
 ## Configuration
 
-Create `.foxlight.json` in your project root:
+Run `foxlight init` to generate a config file, or create one manually. Foxlight looks for `foxlight.config.ts`, `.js`, `.mjs`, or `.json` in your project root.
+
+```ts
+// foxlight.config.ts
+import type { FoxlightConfig } from '@foxlight/core';
+
+const config: FoxlightConfig = {
+  include: ['src/**/*.{ts,tsx,js,jsx,vue,svelte}'],
+  exclude: ['**/*.test.*', '**/*.spec.*'],
+  framework: 'react',
+};
+
+export default config;
+```
+
+Or as JSON (`foxlight.config.json`):
 
 ```json
 {
@@ -276,13 +318,14 @@ foxlight:
 
 ## Packages
 
-| Package                                   | Description                                                                              |
-| ----------------------------------------- | ---------------------------------------------------------------------------------------- |
-| [`@foxlight/core`](packages/core)         | Shared data types, component registry, dependency graph, health scoring, cost estimation |
-| [`@foxlight/analyzer`](packages/analyzer) | Static analysis engine — AST scanning, component detection, Vue/Svelte parsing           |
-| [`@foxlight/bundle`](packages/bundle)     | Bundle size analysis — Vite and Webpack plugins                                          |
-| [`@foxlight/cli`](packages/cli)           | Command-line interface                                                                   |
-| [`@foxlight/ci`](packages/ci)             | CI/CD integration — GitHub Actions, GitLab CI                                            |
+| Package                                     | Description                                                                              |
+| ------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| [`@foxlight/core`](packages/core)           | Shared data types, component registry, dependency graph, health scoring, cost estimation |
+| [`@foxlight/analyzer`](packages/analyzer)   | Static analysis engine — AST scanning, component detection, Vue/Svelte parsing           |
+| [`@foxlight/bundle`](packages/bundle)       | Bundle size analysis — Vite and Webpack plugins                                          |
+| [`@foxlight/cli`](packages/cli)             | Command-line interface                                                                   |
+| [`@foxlight/ci`](packages/ci)               | CI/CD integration — GitHub Actions, GitLab CI                                            |
+| [`@foxlight/dashboard`](packages/dashboard) | Optional local browser dashboard — health trends, bundle explorer, snapshots             |
 
 ## Architecture
 
@@ -292,10 +335,11 @@ packages/
 ├── analyzer/   ← Static analysis (AST, imports, Vue/Svelte parsers)
 ├── bundle/     ← Build plugins (Vite + Webpack size tracking)
 ├── cli/        ← Developer-facing CLI
-└── ci/         ← CI integration (GitHub, GitLab)
+├── ci/         ← CI integration (GitHub, GitLab)
+└── dashboard/  ← Optional local browser dashboard
 ```
 
-All packages share the core data layer. The analyzer scans codebases to build a component registry, the bundle plugin tracks size at build time, and the CLI/CI packages provide the interface.
+All packages share the core data layer. The analyzer scans codebases to build a component registry, the bundle plugin tracks size at build time, the dashboard visualizes results, and the CLI/CI packages provide the interface.
 
 ## Contributing
 

@@ -5,6 +5,7 @@
     { "path": "packages/analyzer" },
     { "path": "packages/bundle" },
     { "path": "packages/cli" },
-    { "path": "packages/ci" }
+    { "path": "packages/ci" },
+    { "path": "packages/dashboard" }
   ]
 }

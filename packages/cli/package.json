@@ -19,10 +19,11 @@
     "dev": "tsup --watch"
   },
   "dependencies": {
-    "@foxlight/core": "*",
-    "@foxlight/analyzer": "*",
-    "@foxlight/bundle": "*",
-    "@foxlight/ci": "*"
+    "@foxlight/core": "^0.2.0",
+    "@foxlight/analyzer": "^0.2.0",
+    "@foxlight/bundle": "^0.2.0",
+    "@foxlight/ci": "^0.2.0",
+    "@foxlight/dashboard": "^0.2.0"
   },
   "files": [
     "dist"

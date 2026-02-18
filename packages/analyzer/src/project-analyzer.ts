@@ -13,6 +13,7 @@ import {
   ComponentRegistry,
   DependencyGraph,
   loadConfig,
+  type ComponentInfo,
   type FoxlightConfig,
   type Framework,
 } from '@foxlight/core';
@@ -164,7 +165,7 @@ export async function analyzeProject(
         // Find the component in the registry and update its props
         const comp = registry
           .getAllComponents()
-          .find((c) => c.name === componentName && c.filePath === filePath);
+          .find((c: ComponentInfo) => c.name === componentName && c.filePath === filePath);
         if (comp && props.length > 0) {
           comp.props = props;
         }
@@ -204,18 +205,18 @@ async function findSourceFiles(config: FoxlightConfig): Promise<string[]> {
   const allFiles = await walkDir(rootDir);
 
   // Build matchers from include/exclude patterns
-  const includeMatchers = config.include.map((p) => createGlobMatcher(p));
-  const excludeMatchers = config.exclude.map((p) => createGlobMatcher(p));
+  const includeMatchers = config.include.map((p: string) => createGlobMatcher(p));
+  const excludeMatchers = config.exclude.map((p: string) => createGlobMatcher(p));
 
   return allFiles.filter((filePath) => {
     const rel = relative(rootDir, filePath);
 
     // Must match at least one include pattern
-    const included = includeMatchers.some((matcher) => matcher(rel));
+    const included = includeMatchers.some((matcher: (path: string) => boolean) => matcher(rel));
     if (!included) return false;
 
     // Must not match any exclude pattern
-    const excluded = excludeMatchers.some((matcher) => matcher(rel));
+    const excluded = excludeMatchers.some((matcher: (path: string) => boolean) => matcher(rel));
     return !excluded;
   });
 }

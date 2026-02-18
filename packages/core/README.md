@@ -9,7 +9,7 @@ Shared data layer for [Foxlight](https://github.com/josegabrielcruz/foxlight) �
 - **Health Scorer** — 6-metric weighted scoring system (bundle size, test coverage, accessibility, freshness, performance, reliability)
 - **Cost Estimator** — hosting cost estimation with pre-configured models for Vercel, Netlify, AWS, and Cloudflare
 - **Upgrade Analyzer** — dependency upgrade impact analysis (semver risk, peer deps, deprecation)
-- **Config Loader** — loads `.foxlight.json` config with framework auto-detection
+- **Config Loader** — loads `foxlight.config.ts` (or `.js`, `.mjs`, `.json`) with framework auto-detection
 
 ## Installation
 

@@ -149,7 +149,9 @@ export function crossReferenceComponents(components: ComponentInfo[]): Component
 
   // Resolve children from names to IDs
   for (const comp of components) {
-    comp.children = comp.children.map((name) => byName.get(name)?.id ?? name).filter(Boolean);
+    comp.children = comp.children
+      .map((name: string) => byName.get(name)?.id ?? name)
+      .filter(Boolean);
   }
 
   return components;

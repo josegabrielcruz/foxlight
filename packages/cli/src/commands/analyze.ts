@@ -2,10 +2,12 @@
 // @foxlight/cli — Analyze command
 //
 // Scans the project, discovers components, and prints a
-// summary of what was found.
+// summary of what was found. Results are automatically saved
+// as snapshots in .foxlight/snapshots/ for dashboard viewing.
 // ============================================================
 
 import { analyzeProject } from '@foxlight/analyzer';
+import { SnapshotStore } from '@foxlight/dashboard';
 import { ui } from '../utils/output.js';
 
 export interface AnalyzeOptions {
@@ -66,6 +68,18 @@ export async function runAnalyze(options: AnalyzeOptions): Promise<void> {
       const subtree = result.registry.getSubtree(root.id);
       ui.info(`  ${root.name}`, `(${subtree.length} components in subtree)`);
     }
+  }
+
+  // Save snapshot for dashboard
+  try {
+    const snapshot = result.registry.createSnapshot('local', 'local');
+    const snapshotStore = new SnapshotStore(rootDir);
+    await snapshotStore.saveSnapshot(snapshot);
+    ui.info('📊 Snapshot saved to:', '.foxlight/snapshots/');
+    ui.info('Tip:', 'Run `foxlight dashboard` to visualize');
+  } catch (error) {
+    // Don't fail the command if snapshot saving fails; just warn
+    ui.warn(`Could not save snapshot: ${error instanceof Error ? error.message : String(error)}`);
   }
 
   ui.gap();

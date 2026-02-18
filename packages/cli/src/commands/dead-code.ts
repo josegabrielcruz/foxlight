@@ -6,8 +6,14 @@
 // ============================================================
 
 import { resolve } from 'node:path';
-import { detectDeadCode, formatDeadCodeReport } from '@foxlight/core';
+import {
+  detectDeadCode,
+  formatDeadCodeReport,
+  type UnusedComponent,
+  type UnusedExport,
+} from '@foxlight/core';
 import { analyzeProject } from '@foxlight/analyzer';
+import { ui } from '../utils/output.js';
 
 export interface DeadCodeOptions {
   root: string;
@@ -21,10 +27,11 @@ export interface DeadCodeOptions {
 export async function runDeadCodeDetection(options: DeadCodeOptions): Promise<void> {
   const projectRoot = resolve(options.root || '.');
 
-  console.log('🔍 Analyzing codebase for dead code...\n');
+  ui.progress('Analyzing codebase for dead code');
 
   // Analyze the project to get the component registry and dependency graph
   const analysis = await analyzeProject(projectRoot);
+  ui.progressDone('Analysis complete');
 
   // Detect dead code
   const report = detectDeadCode(analysis.registry);
@@ -39,19 +46,19 @@ export async function runDeadCodeDetection(options: DeadCodeOptions): Promise<vo
         unusedExports: report.unusedExports.length,
         potentialSavingsBytes: report.totalPotentialBytes,
       },
-      unusedComponents: report.unusedComponents.map((c) => ({
+      unusedComponents: report.unusedComponents.map((c: UnusedComponent) => ({
         id: c.id,
         name: c.name,
         filePath: c.filePath,
         reason: c.reason,
         potentialSavings: c.potentialSavings,
       })),
-      orphanedComponents: report.orphanedComponents.map((c) => ({
+      orphanedComponents: report.orphanedComponents.map((c: UnusedComponent) => ({
         id: c.id,
         name: c.name,
         filePath: c.filePath,
       })),
-      unusedExports: report.unusedExports.map((e) => ({
+      unusedExports: report.unusedExports.map((e: UnusedExport) => ({
         filePath: e.filePath,
         exportName: e.exportName,
         reason: e.reason,
@@ -65,16 +72,20 @@ export async function runDeadCodeDetection(options: DeadCodeOptions): Promise<vo
   console.log(formatDeadCodeReport(report));
 
   if (report.unusedComponents.length > 0) {
-    console.log('\n💡 Tip: These components can likely be safely removed.');
-    console.log('Run with --json for detailed analysis.');
+    ui.gap();
+    ui.info('Tip:', 'These components can likely be safely removed.');
+    ui.info('', 'Run with --json for detailed analysis.');
   }
 
   const totalIssues =
     report.unusedComponents.length + report.orphanedComponents.length + report.unusedExports.length;
 
   if (totalIssues === 0) {
-    console.log('\n✅ No dead code detected!');
+    ui.gap();
+    ui.success('No dead code detected!');
   } else {
-    console.log(`\n⚠️  Found ${totalIssues} potential issues to address.\n`);
+    ui.gap();
+    ui.warn(`Found ${totalIssues} potential issues to address.`);
   }
+  ui.gap();
 }

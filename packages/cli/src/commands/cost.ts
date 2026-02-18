@@ -12,6 +12,8 @@ import {
   COST_MODELS,
   DEFAULT_TRAFFIC,
   type TrafficProfile,
+  type ComponentInfo,
+  type ComponentBundleInfo,
 } from '@foxlight/core';
 import { formatBytes } from '@foxlight/bundle';
 import { ui } from '../utils/output.js';
@@ -39,8 +41,10 @@ export async function runCost(options: CostOptions): Promise<void> {
 
   // Gather bundle info for all components
   const bundleInfos = components
-    .map((comp) => result.registry.getBundleInfo(comp.id))
-    .filter((info) => info !== undefined);
+    .map((comp: ComponentInfo) => result.registry.getBundleInfo(comp.id))
+    .filter(
+      (info: ComponentBundleInfo | undefined): info is ComponentBundleInfo => info !== undefined,
+    );
 
   // Use synthetic bundle info if no real data exists (from size tracker)
   const hasBundleData = bundleInfos.length > 0;
@@ -91,8 +95,14 @@ export async function runCost(options: CostOptions): Promise<void> {
   ui.info('Traffic assumption:', `${formatNumber(traffic.monthlyPageViews)} page views/month`);
 
   if (bundleInfos.length > 0) {
-    const totalRaw = bundleInfos.reduce((sum, b) => sum + b.selfSize.raw, 0);
-    const totalGzip = bundleInfos.reduce((sum, b) => sum + b.selfSize.gzip, 0);
+    const totalRaw = bundleInfos.reduce(
+      (sum: number, b: ComponentBundleInfo) => sum + b.selfSize.raw,
+      0,
+    );
+    const totalGzip = bundleInfos.reduce(
+      (sum: number, b: ComponentBundleInfo) => sum + b.selfSize.gzip,
+      0,
+    );
     ui.info('Total bundle size:', `${formatBytes(totalRaw)} (${formatBytes(totalGzip)} gzip)`);
   }
 

@@ -1,8 +1,11 @@
 node_modules/
 dist/
 *.tsbuildinfo
+*.d.ts.map
 .DS_Store
 coverage/
+.foxlight/
 .env
 .env.local
 *.code-workspace
+todo.md

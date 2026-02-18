@@ -18,7 +18,7 @@ npx @foxlight/cli <command>
 
 ### `foxlight init`
 
-Initialize Foxlight in your project. Creates a `.foxlight.json` configuration file.
+Initialize Foxlight in your project. Creates a `foxlight.config.ts` configuration file.
 
 ```bash
 foxlight init
@@ -75,14 +75,19 @@ foxlight upgrade --json              # Output as JSON
 
 ## Configuration
 
-Create a `.foxlight.json` in your project root:
+Run `foxlight init` to generate a config file, or create one manually. Foxlight looks for `foxlight.config.ts`, `.js`, `.mjs`, or `.json` in your project root.
 
-```json
-{
-  "include": ["src/**/*.{ts,tsx,js,jsx,vue,svelte}"],
-  "exclude": ["**/*.test.*", "**/*.spec.*"],
-  "framework": "react"
-}
+```ts
+// foxlight.config.ts
+import type { FoxlightConfig } from '@foxlight/core';
+
+const config: FoxlightConfig = {
+  include: ['src/**/*.{ts,tsx,js,jsx,vue,svelte}'],
+  exclude: ['**/*.test.*', '**/*.spec.*'],
+  framework: 'react',
+};
+
+export default config;
 ```
 
 ## License

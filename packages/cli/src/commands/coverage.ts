@@ -12,7 +12,9 @@ import {
   findUncoveredComponents,
   findLowCoverageComponents,
   summarizeCoverage,
+  type ComponentCoverage,
 } from '@foxlight/core';
+import { ui } from '../utils/output.js';
 
 export interface CoverageOptions {
   root: string;
@@ -31,11 +33,12 @@ export async function runCoverage(options: CoverageOptions): Promise<void> {
   const coverageData = await loadCoverageData(projectRoot, options.coveragePath);
 
   if (Object.keys(coverageData).length === 0) {
-    console.log('❌ No coverage data found.');
-    console.log('Make sure you have generated coverage with a tool like:');
-    console.log('  npm test -- --coverage (Jest/Vitest)');
-    console.log('  npx nyc npm test');
-    process.exit(1);
+    ui.error('No coverage data found.');
+    ui.info('Make sure you have generated coverage with a tool like:', '');
+    ui.info('  npm test -- --coverage', '(Jest/Vitest)');
+    ui.info('  npx nyc npm test', '');
+    process.exitCode = 1;
+    return;
   }
 
   // For now, we'll use filePaths from coverage data since we'd need the full registry
@@ -48,7 +51,7 @@ export async function runCoverage(options: CoverageOptions): Promise<void> {
     const output = {
       timestamp: new Date().toISOString(),
       overall: coverage.overallPercentage,
-      components: Array.from(coverage.components.values()).map((c) => ({
+      components: Array.from(coverage.components.values()).map((c: ComponentCoverage) => ({
         filePath: c.filePath,
         coverage: c.percentage,
         statements: {
@@ -66,18 +69,18 @@ export async function runCoverage(options: CoverageOptions): Promise<void> {
   }
 
   // Display summary
-  console.log('\n📊 Test Coverage Report\n');
+  ui.heading('Test Coverage Report');
   console.log(summarizeCoverage(coverage));
 
   // Show uncovered components
   const uncovered = findUncoveredComponents(coverage);
   if (uncovered.length > 0) {
-    console.log(`\n❌ Uncovered Components (${uncovered.length}):`);
+    ui.heading(`Uncovered Components (${uncovered.length})`);
     for (const comp of uncovered.slice(0, 10)) {
-      console.log(`  - ${comp.filePath}`);
+      ui.error(comp.filePath);
     }
     if (uncovered.length > 10) {
-      console.log(`  ... and ${uncovered.length - 10} more`);
+      ui.info('', `...and ${uncovered.length - 10} more`);
     }
   }
 
@@ -85,20 +88,22 @@ export async function runCoverage(options: CoverageOptions): Promise<void> {
   const threshold = options.threshold || 50;
   const lowCoverage = findLowCoverageComponents(coverage, threshold);
   if (lowCoverage.length > 0) {
-    console.log(`\n⚠️  Low Coverage (<${threshold}%) (${lowCoverage.length}):`);
+    ui.heading(`Low Coverage (<${threshold}%) (${lowCoverage.length})`);
     for (const comp of lowCoverage.slice(0, 15)) {
-      console.log(`  ${comp.filePath}: ${comp.percentage}%`);
+      ui.warn(`${comp.filePath}: ${comp.percentage}%`);
     }
     if (lowCoverage.length > 15) {
-      console.log(`  ... and ${lowCoverage.length - 15} more\n`);
+      ui.info('', `...and ${lowCoverage.length - 15} more`);
     }
   }
 
   // Exit with error if coverage falls below threshold
   if (coverage.overallPercentage < threshold) {
-    console.log(`\n❌ Coverage ${coverage.overallPercentage}% is below threshold ${threshold}%`);
-    process.exit(1);
+    ui.gap();
+    ui.error(`Coverage ${coverage.overallPercentage}% is below threshold ${threshold}%`);
+    process.exitCode = 1;
+    return;
   }
 
-  console.log('');
+  ui.gap();
 }

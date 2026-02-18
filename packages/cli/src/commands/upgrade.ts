@@ -7,7 +7,7 @@
 // ============================================================
 
 import { analyzeProject } from '@foxlight/analyzer';
-import { analyzeUpgrade } from '@foxlight/core';
+import { analyzeUpgrade, type ComponentInfo } from '@foxlight/core';
 import { ui } from '../utils/output.js';
 
 export interface UpgradeOptions {
@@ -25,7 +25,9 @@ export async function runUpgrade(options: UpgradeOptions): Promise<void> {
   ui.progressDone('Analysis complete');
 
   const components = result.registry.getAllComponents();
-  const affectedComponents = components.filter((c) => c.dependencies.includes(packageName));
+  const affectedComponents = components.filter((c: ComponentInfo) =>
+    c.dependencies.includes(packageName),
+  );
 
   ui.progress(`Checking ${packageName} upgrade`);
   const preview = await analyzeUpgrade({
