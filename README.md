@@ -101,34 +101,55 @@ Nuxt projects work through Foxlight's Vue support. `.vue` single-file components
 
 ---
 
-## Getting Started
+## Installation
+
+Install Foxlight in your project:
 
 ```bash
-# Install and build
+npm install @foxlight/cli
+npx foxlight init
+npx foxlight analyze
+npx foxlight health
+```
+
+For a full walkthrough of available commands, see [CLI Commands](#cli-commands) below.
+
+## Development
+
+To work on Foxlight itself, clone the repository and set up the monorepo:
+
+```bash
+# Install dependencies and build all packages
 npm install
 npm run build
 
-# Initialize in your project
-npx foxlight init
+# Run tests
+npm test
 
-# Analyze your project
-npx foxlight analyze
+# Run tests in watch mode
+npm run test:watch
 
-# View component health
-npx foxlight health
+# Type-check all packages
+npm run typecheck
+
+# Lint
+npm run lint
+
+# Format
+npm run format
 ```
 
 ## CLI Commands
 
-| Command                  | Description                              |
-| ------------------------ | ---------------------------------------- |
-| `foxlight init`          | Initialize Foxlight in your project      |
-| `foxlight analyze`       | Scan and discover components             |
-| `foxlight health`        | Component health dashboard               |
-| `foxlight cost`          | Estimate hosting costs                   |
-| `foxlight upgrade <pkg>` | Dependency upgrade impact analysis       |
-| `foxlight coverage`      | Show test coverage by component          |
-| `foxlight dead-code`     | Find unused components and exports       |
+| Command                  | Description                               |
+| ------------------------ | ----------------------------------------- |
+| `foxlight init`          | Initialize Foxlight in your project       |
+| `foxlight analyze`       | Scan and discover components              |
+| `foxlight health`        | Component health dashboard                |
+| `foxlight cost`          | Estimate hosting costs                    |
+| `foxlight upgrade <pkg>` | Dependency upgrade impact analysis        |
+| `foxlight coverage`      | Show test coverage by component           |
+| `foxlight dead-code`     | Find unused components and exports        |
 | `foxlight api-check`     | Detect breaking changes in component APIs |
 
 All commands support `--json` for machine-readable output and `--root <dir>` to specify the project root.
@@ -162,6 +183,7 @@ npx foxlight dead-code --json
 ```
 
 This command identifies:
+
 - **Unused components** — components that are never imported or used
 - **Orphaned components** — components only used by other unused components
 - **Unused exports** — exports that are defined but never imported
@@ -182,6 +204,7 @@ npx foxlight api-check --save
 ```
 
 The `api-check` command detects:
+
 - **Prop removals** — required props that are removed
 - **Export removals** — exports that are removed
 - **Export kind changes** — changes from named to default exports or vice versa
@@ -273,28 +296,6 @@ packages/
 ```
 
 All packages share the core data layer. The analyzer scans codebases to build a component registry, the bundle plugin tracks size at build time, and the CLI/CI packages provide the interface.
-
-## Development
-
-```bash
-# Run tests
-npm test
-
-# Run tests in watch mode
-npm run test:watch
-
-# Type-check all packages
-npm run typecheck
-
-# Lint
-npm run lint
-
-# Format
-npm run format
-
-# Build all packages
-npm run build
-```
 
 ## Contributing
 
